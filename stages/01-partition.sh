@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
+source "$LIB_DIR/common.sh"
 
 echo "[*] Available disks:"
 lsblk -d -o NAME,SIZE,MODEL,TYPE
