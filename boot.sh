@@ -11,40 +11,27 @@ ansi_art='                           ▄▄▄
 ███   ███  ███   ███        ███       ███       ███   ███   ███   ███  ███   ███   ███   ███
 ███████▀    ▀█████▀    ▀█████▀        ███       ███   █▀    ███   ███  ███████▀    ███   █▀
                                                             ███   █▀                         '
-
 clear
 echo -e "\n$ansi_art\n"
 
-if ! command -v git >/dev/null 2>&1; then
-    echo "[*] Installing git..."
-    pacman -Sy --noconfirm git
-fi
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+STAGES_DIR="$SCRIPT_DIR/stages"
+CHROOT_DIR="$SCRIPT_DIR/chroot"
+LIB_DIR="$SCRIPT_DIR/lib"
+CONFIG_FILE="$SCRIPT_DIR/install.conf"
 
-WORKDIR="/tmp/custarch"
+source "$CONFIG_FILE"
 
-rm -rf "$WORKDIR"
+chmod +x "$STAGES_DIR"/*.sh
+chmod +x "$CHROOT_DIR"/*.sh
+chmod +x "$LIB_DIR"/*.sh
 
-echo "[*] Cloning repo..."
-git clone https://github.com/sdrtba/CustArch.git $WORKDIR
-cd $WORKDIR
+mapfile -t stage_scripts < <(find "$STAGES_DIR" -maxdepth 1 -type f -name '*.sh' | sort)
+echo "[*] Running ${#stage_scripts[@]} stage(s)..."
+for stage_script in "${stage_scripts[@]}"; do
+    stage_name="$(basename "$stage_script")"
+    echo "[*] Running $stage_name..."
+    bash "$stage_script"
+done
 
-source "install.conf"
-echo $TIMEZONE
-
-chmod +x $WORKDIR/stages/*.sh
-chmod +x $WORKDIR/chroot/*.sh
-chmod +x $WORKDIR/lib/*.sh
-
-echo "[*] Running stage 01..."
-bash "$WORKDIR/stages/01-partition.sh"
-
-echo "[*] Running stage 02..."
-bash "$WORKDIR/stages/02-format-mount.sh"
-
-echo "[*] Running stage 03..."
-bash "$WORKDIR/stages/03-pacstrap.sh"
-
-echo "[*] Running stage 04..."
-bash "$WORKDIR/stages/04-run-chroot.sh"
-
-echo "[*] Installation steps finished."
+echo "[*] Installation stages finished."
