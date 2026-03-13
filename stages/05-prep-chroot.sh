@@ -6,5 +6,5 @@ load_config
 TARGET_REPO="/mnt/root/CustArch"
 
 rm -rf "$TARGET_REPO"
-mkdir -p /mnt/root
-cp -r "$SCRIPT_DIR" "$TARGET_REPO"
+mkdir -p "$TARGET_REPO"
+cp -a "$SCRIPT_DIR"/. "$TARGET_REPO"/
