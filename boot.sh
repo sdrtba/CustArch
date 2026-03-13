@@ -13,10 +13,8 @@ ansi_art='                           ▄▄▄
 clear
 echo -e "\n$ansi_art\n"
 
-sudo pacman -Syu --noconfirm --needed git
-
 OMARCHY_REPO="sdrtba/CustArch"
-REPO_DIR="~/.local/share/custarch"
+REPO_DIR="~/custarch"
 echo -e "\nCloning repo from: https://github.com/${OMARCHY_REPO}.git"
 rm -rf $REPO_DIR
 git clone "https://github.com/${OMARCHY_REPO}.git" $REPO_DIR >/dev/null
