@@ -19,7 +19,7 @@ STAGES_DIR="$SCRIPT_DIR/stages"
 LIB_DIR="$SCRIPT_DIR/lib"
 CONFIG_FILE="$SCRIPT_DIR/install.conf"
 
-source "$CONFIG_FILE"
+load_config
 
 chmod +x "$STAGES_DIR"/*.sh
 chmod +x "$LIB_DIR"/*.sh
