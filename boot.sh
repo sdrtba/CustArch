@@ -1,32 +1,39 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+ansi_art='                           ▄▄▄
+ ▄███████  ███   ███   ▄███████  ▄███████████▄   ▄███████    ▄███████   ▄███████    ▄█   █▄
+███   ███  ███   ███  ███             ███       ███   ███   ███   ███  ███   ███   ███   ███
+███   █▀   ███   ███  ███             ███       ███   ███   ███   ███  ███   █▀    ███   ███
+███        ███   ███  ▀███████▄       ███      ▄███▄▄▄███  ▄███▄▄▄██▀  ███        ▄███▄▄▄███▄
+███        ███   ███        ███       ███      ▀███▀▀▀███  ▀███▀▀▀▀    ███       ▀▀███▀▀▀███
+███   █▄   ███   ███        ███       ███       ███   ███  ██████████  ███   █▄    ███   ███
+███   ███  ███   ███        ███       ███       ███   ███   ███   ███  ███   ███   ███   ███
+███████▀    ▀█████▀    ▀█████▀        ███       ███   █▀    ███   ███  ███████▀    ███   █▀
+                                                            ███   █▀                         '
 
-#!/usr/bin/env bash
-set -euo pipefail
+clear
+echo -e "\n$ansi_art\n"
 
-BASE_URL="https://raw.githubusercontent.com/sdrtba/CustArch/refs/heads/main/"
-ARCHIVE="custarch.tar.gz"
-ARCHIVE_URL="$BASE_URL/$ARCHIVE"
+if ! command -v git >/dev/null 2>&1; then
+    echo "[*] Installing git..."
+    pacman -Sy --noconfirm git
+fi
+
 WORKDIR="/tmp/custarch"
-LOGFILE="/tmp/custarch-install.log"
-
-exec > >(tee -a "$LOGFILE") 2>&1
-
-echo "[*] Starting bootstrap..."
 
 rm -rf "$WORKDIR"
-mkdir -p "$WORKDIR"
 
-echo "[*] Downloading project archive..."
-curl -fsSL "$ARCHIVE_URL" -o /tmp/$ARCHIVE
+echo "[*] Cloning repo..."
+git clone https://your-domain-or-repo/myarch.git $WORKDIR
+cd $WORKDIR
 
-echo "[*] Extracting archive..."
-tar -xzf /tmp/$ARCHIVE -C /tmp
+source "install.conf"
+echo $TIMEZONE
 
-chmod +x "$WORKDIR"/stages/*.sh
-chmod +x "$WORKDIR"/chroot/*.sh
-chmod +x "$WORKDIR"/lib/*.sh
+chmod +x $WORKDIR/stages/*.sh
+chmod +x $WORKDIR/chroot/*.sh
+chmod +x $WORKDIR/lib/*.sh
 
 echo "[*] Running stage 01..."
 bash "$WORKDIR/stages/01-partition.sh"
@@ -41,4 +48,3 @@ echo "[*] Running stage 04..."
 bash "$WORKDIR/stages/04-run-chroot.sh"
 
 echo "[*] Installation steps finished."
-echo "[*] Log saved to $LOGFILE"
