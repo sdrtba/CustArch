@@ -8,15 +8,15 @@ reflector -c Russia -a 12 --latest 10 --protocol https --sort rate --save /etc/p
 packages=(
     base base-devel linux linux-firmware amd-ucode
     grub efibootmgr os-prober grub-btrfs btrfs-progs zram-generator
-    sudo networkmanager nano vim curl git reflector openssh
+    sudo networkmanager nano vim curl git reflector
 )
 
 case "$VM" in
     VBOX)
-        packages+=(virtualbox-guest-utils linux-headers)
+        packages+=(openssh virtualbox-guest-utils linux-headers)
         ;;
     VMWare)
-        packages+=(open-vm-tools)
+        packages+=(openssh open-vm-tools)
         ;;
 esac
 

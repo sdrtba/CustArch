@@ -15,5 +15,9 @@ echo "$HOSTNAME" > /etc/hostname
 
 systemctl enable NetworkManager
 systemctl enable reflector.timer
-systemctl enable sshd
-systemctl start sshd
+
+
+if [ "$VM" ]; then
+    systemctl enable sshd
+    systemctl start sshd
+fi
