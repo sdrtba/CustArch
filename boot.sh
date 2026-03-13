@@ -16,14 +16,12 @@ echo -e "\n$ansi_art\n"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 STAGES_DIR="$SCRIPT_DIR/stages"
-CHROOT_DIR="$SCRIPT_DIR/chroot"
 LIB_DIR="$SCRIPT_DIR/lib"
 CONFIG_FILE="$SCRIPT_DIR/install.conf"
 
 source "$CONFIG_FILE"
 
 chmod +x "$STAGES_DIR"/*.sh
-chmod +x "$CHROOT_DIR"/*.sh
 chmod +x "$LIB_DIR"/*.sh
 
 mapfile -t stage_scripts < <(find "$STAGES_DIR" -maxdepth 1 -type f -name '*.sh' | sort)
