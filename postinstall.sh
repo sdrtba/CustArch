@@ -25,7 +25,14 @@ echo "[*] Running ${#root_scripts[@]} ROOT post-install stage(s)..."
 for root_script in "${root_scripts[@]}"; do
     stage_name="$(basename "$root_script")"
     echo "[*] Running root stage $stage_name..."
-    sudo bash "$root_script"
+    sudo \
+        SCRIPT_DIR="$SCRIPT_DIR" \
+        POST_DIR="$POST_DIR" \
+        ROOT_DIR="$ROOT_DIR" \
+        USER_DIR="$USER_DIR" \
+        LIB_DIR="$LIB_DIR" \
+        CONFIG_FILE="$CONFIG_FILE" \
+        bash "$root_script"
 done
 
 echo "[*] Running ${#user_scripts[@]} USER post-install stage(s)..."

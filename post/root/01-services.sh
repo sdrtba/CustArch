@@ -12,3 +12,5 @@ sudo systemctl enable fstrim.timer
 
 sudo systemctl enable grub-btrfsd
 sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+rustup default stable

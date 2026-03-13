@@ -4,6 +4,8 @@ source "$LIB_DIR/common.sh"
 load_config
 
 packages=(
+    pipewire-jack
+
     wayland
     hyprland
     xdg-desktop-portal
@@ -50,9 +52,9 @@ packages=(
 )
 
 packages+=(
-    mesa vulkan-radeon libva-mesa-driver mesa-vdpau \
+    mesa vulkan-radeon libva-mesa-driver \
     git htop wget curl man-db man-pages texinfo \
-	unzip ufw timeshift fastfetch
+	unzip ufw timeshift fastfetch rustup
 )
 
 if [[ ${#packages[@]} -gt 0 ]]; then
