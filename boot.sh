@@ -18,6 +18,7 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
 STAGES_DIR="$SCRIPT_DIR/stages"
 LIB_DIR="$SCRIPT_DIR/lib"
 CONFIG_FILE="$SCRIPT_DIR/install.conf"
+export SCRIPT_DIR STAGES_DIR LIB_DIR CONFIG_FILE
 
 source "$LIB_DIR/common.sh"
 load_config

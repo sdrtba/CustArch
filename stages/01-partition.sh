@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 source "$LIB_DIR/common.sh"
+load_config
 
 echo "[*] Available disks:"
 lsblk -d -o NAME,SIZE,MODEL,TYPE
@@ -10,8 +11,8 @@ read -rp "Target disk: " DISK
 
 [ -b "$DISK" ] || { echo "Disk not found: $DISK"; exit 1; }
 
-read -rp "This will erase data on $DISK. Type YES to continue: " CONFIRM
-[ "$CONFIRM" = "YES" ] || exit 1
+read -rp "This will erase data on $DISK. Type 'y' to continue: " CONFIRM
+[ "$CONFIRM" = "y" ] || exit 1
 
 cfdisk "$DISK"
 
