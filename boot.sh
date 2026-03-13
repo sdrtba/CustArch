@@ -25,7 +25,7 @@ WORKDIR="/tmp/custarch"
 rm -rf "$WORKDIR"
 
 echo "[*] Cloning repo..."
-git clone https://your-domain-or-repo/myarch.git $WORKDIR
+git clone https://github.com/sdrtba/CustArch.git $WORKDIR
 cd $WORKDIR
 
 source "install.conf"
