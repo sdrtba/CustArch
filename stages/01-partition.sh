@@ -25,7 +25,6 @@ read -rp "ROOT partition: " ROOT_PART
 read -rp "Filesystem for root [ext4]: " FS_TYPE
 
 FS_TYPE="${FS_TYPE:-ext4}"
-TIMEZONE="${TIMEZONE:-Europe/Amsterdam}"
 
 save_config_var DISK "$DISK"
 save_config_var EFI_PART "$EFI_PART"
