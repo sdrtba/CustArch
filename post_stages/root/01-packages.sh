@@ -28,7 +28,6 @@ packages=(
     pipewire-pulse
     pipewire-jack
     pipewire-audio
-    pipewire-bluetooth
     pavucontrol
     playerctl
 

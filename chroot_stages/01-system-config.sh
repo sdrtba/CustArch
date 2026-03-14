@@ -11,8 +11,8 @@ sed -i 's/^#VerbosePkgLists$/VerbosePkgLists/' "$PACMAN_CONF"
 ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
 hwclock --systohc
 
-sed -Ei 's/^#(en_US\.UTF-8[[:space:]]+UTF-8)$/\1/' /etc/locale.gen
-sed -Ei 's/^#(ru_RU\.UTF-8[[:space:]]+UTF-8)$/\1/' /etc/locale.gen
+sed -Ei 's/^#(en_US\.UTF-8[[:space:]]+UTF-8)[[:space:]]*$/\1/' /etc/locale.gen
+sed -Ei 's/^#(ru_RU\.UTF-8[[:space:]]+UTF-8)[[:space:]]*$/\1/' /etc/locale.gen
 locale-gen
 echo "LANG=en_US.UTF-8" > /etc/locale.conf
 
@@ -26,3 +26,6 @@ if [ "$VM" ]; then
     systemctl enable sshd
     systemctl start sshd
 fi
+
+#en_US.UTF-8 UTF-8
+#ru_RU.UTF-8 UTF-8
