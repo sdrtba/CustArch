@@ -23,7 +23,8 @@ create_pre_postinstall_snapshot() {
 
     snapshot_name="pre-postinstall-$(date +%Y%m%d-%H%M%S)"
 
-    sudo btrfs subvolume create "$snapshot_name" >/dev/null
+    sudo timeshift --create --comments "$snapshot_name"
+    sudo grub-mkconfig -o /boot/grub/grub.cfg
     echo "[*] Snapshot created"
 }
 
