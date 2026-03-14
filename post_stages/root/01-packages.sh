@@ -6,50 +6,50 @@ load_config
 packages=(
     wayland
     hyprland
+    hyprlock
+    hypridle
+    hyprpicker
+    hyprpolkitagent
+    xorg-xwayland
     xdg-desktop-portal
     xdg-desktop-portal-hyprland
-    xdg-user-dirs
-    xdg-utils
     qt5-wayland
     qt6-wayland
-
-    egl-wayland
-    xorg-xwayland
 
     kitty
     waybar
     swaync
-    dunst
-    rofi
-    hyprlock
-    hypridle
-    hyprpaper
+    rofi-wayland
     swww
-
-
-    thunar
-    thunar-archive-plugin
-    file-roller
 
     pipewire
     wireplumber
+    pipewire-alsa
     pipewire-pulse
     pipewire-jack
+    pipewire-audio
+    pipewire-bluetooth
     pavucontrol
-
-    wl-clipboard
-    cliphist
-    grim
-    slurp
-    brightnessctl
     playerctl
-    power-profiles-daemon
-    network-manager-applet
-    polkit-gnome
+
+    dolphin
+    kio-extras
+    ark
+    udisks2
+    udiskie
+    xdg-utils
 
     bluez
     bluez-utils
     blueman
+    network-manager-applet
+
+    power-profiles-daemon
+    brightnessctl
+    acpi
+
+    wl-clipboard
+    cliphist
 
     noto-fonts
     noto-fonts-cjk
@@ -57,7 +57,14 @@ packages=(
     ttf-dejavu
     ttf-jetbrains-mono-nerd
 
+    grim
+    slurp
+
+    jq
     zsh
+    fzf
+    fastfetch
+    firefox
 )
 
 packages+=(
