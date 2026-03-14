@@ -3,4 +3,4 @@ set -euo pipefail
 source "$LIB_DIR/common.sh"
 load_config
 
-# Install or configure your window manager, bars, launchers, and themes here.
+echo "[*] Desktop stage placeholder."

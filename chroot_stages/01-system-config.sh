@@ -3,6 +3,11 @@ set -euo pipefail
 source "$LIB_DIR/common.sh"
 load_config
 
+PACMAN_CONF="/etc/pacman.conf"
+
+sed -i 's/^#Color$/Color/' "$PACMAN_CONF"
+sed -i 's/^#VerbosePkgLists$/VerbosePkgLists/' "$PACMAN_CONF"
+
 ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
 hwclock --systohc
 

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-CHROOT_DIR="$SCRIPT_DIR/chroot"
+CHROOT_DIR="$SCRIPT_DIR/chroot_stages"
 LIB_DIR="$SCRIPT_DIR/lib"
 CONFIG_FILE="$SCRIPT_DIR/install.conf"
 export SCRIPT_DIR CHROOT_DIR LIB_DIR CONFIG_FILE

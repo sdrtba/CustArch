@@ -4,8 +4,8 @@ source "$LIB_DIR/common.sh"
 load_config
 
 echo "EFI partition: $EFI_PART"
-read -rp "Format EFI partition? Use 'y' for fresh ESP, skip for dual-boot [y/N]: " FORMAT_EFI_CONFIRM
-if [[ "$FORMAT_EFI_CONFIRM" =~ ^[Yy]$ ]]; then
+read -rp "Format EFI partition? Use 'YES' for fresh ESP, skip for dual-boot: " FORMAT_EFI_CONFIRM
+if [[ "$FORMAT_EFI_CONFIRM" = "YES" ]]; then
     mkfs.fat -F32 "$EFI_PART"
 fi
 

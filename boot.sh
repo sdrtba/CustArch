@@ -15,8 +15,8 @@ clear
 echo -e "\n$ansi_art\n"
 
 SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
-STAGES_DIR="$SCRIPT_DIR/stages"
-CHROOT_DIR="$SCRIPT_DIR/chroot"
+STAGES_DIR="$SCRIPT_DIR/live_stages"
+CHROOT_DIR="$SCRIPT_DIR/chroot_stages"
 LIB_DIR="$SCRIPT_DIR/lib"
 CONFIG_FILE="$SCRIPT_DIR/install.conf"
 export SCRIPT_DIR STAGES_DIR CHROOT_DIR LIB_DIR CONFIG_FILE

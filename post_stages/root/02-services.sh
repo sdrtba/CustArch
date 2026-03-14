@@ -8,7 +8,7 @@ systemctl enable ufw
 systemctl start ufw
 ufw --force enable
 
-sudo systemctl enable fstrim.timer
+systemctl enable fstrim.timer
 
-sudo systemctl enable grub-btrfsd
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+systemctl enable grub-btrfsd
+grub-mkconfig -o /boot/grub/grub.cfg
