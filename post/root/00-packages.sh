@@ -4,23 +4,28 @@ source "$LIB_DIR/common.sh"
 load_config
 
 packages=(
-    pipewire-jack
-
     wayland
     hyprland
     xdg-desktop-portal
     xdg-desktop-portal-hyprland
+    xdg-user-dirs
+    xdg-utils
     qt5-wayland
     qt6-wayland
+
+    egl-wayland
+    xorg-xwayland
 
     kitty
     waybar
     swaync
+    dunst
     rofi
     hyprlock
     hypridle
     hyprpaper
     swww
+
 
     thunar
     thunar-archive-plugin
@@ -29,16 +34,22 @@ packages=(
     pipewire
     wireplumber
     pipewire-pulse
+    pipewire-jack
     pavucontrol
 
     wl-clipboard
+    cliphist
     grim
     slurp
     brightnessctl
     playerctl
+    power-profiles-daemon
     network-manager-applet
-    blueman
     polkit-gnome
+
+    bluez
+    bluez-utils
+    blueman
 
     noto-fonts
     noto-fonts-cjk
@@ -46,7 +57,7 @@ packages=(
     ttf-dejavu
     ttf-jetbrains-mono-nerd
 
-    lxqt-policykit
+    lxqt-policykit-agent
 
     zsh
 )

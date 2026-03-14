@@ -6,7 +6,7 @@ load_config
 ufw allow 22
 systemctl enable ufw
 systemctl start ufw
-ufw enable
+ufw --force enable
 
 sudo systemctl enable fstrim.timer
 

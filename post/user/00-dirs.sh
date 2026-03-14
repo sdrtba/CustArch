@@ -4,3 +4,4 @@ source "$LIB_DIR/common.sh"
 load_config
 
 mkdir -p "$HOME/.config"
+cp -r "$CONFIG_DIR/"* "$HOME/.config/"
