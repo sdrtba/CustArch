@@ -57,8 +57,6 @@ packages=(
     ttf-dejavu
     ttf-jetbrains-mono-nerd
 
-    lxqt-policykit-agent
-
     zsh
 )
 

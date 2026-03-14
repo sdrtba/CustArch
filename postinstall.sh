@@ -23,7 +23,7 @@ create_pre_postinstall_snapshot() {
 
     snapshot_name="pre-postinstall-$(date +%Y%m%d-%H%M%S)"
 
-    sudo btrfs subvolume create --commnts "$snapshot_name" >/dev/null
+    sudo btrfs subvolume create "$snapshot_name" >/dev/null
     echo "[*] Snapshot created"
 }
 
