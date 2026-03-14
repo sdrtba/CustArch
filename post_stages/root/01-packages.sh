@@ -65,7 +65,7 @@ packages=(
 packages+=(
     mesa vulkan-radeon libva-mesa-driver \
     git htop wget curl man-db man-pages texinfo \
-	unzip ufw timeshift fastfetch rustup
+	unzip ufw fastfetch rustup
 )
 
 if [[ ${#packages[@]} -gt 0 ]]; then
