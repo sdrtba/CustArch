@@ -21,6 +21,7 @@ packages=(
     swaync
     rofi-wayland
     swww
+    wlogout
 
     pipewire
     wireplumber
@@ -37,6 +38,7 @@ packages=(
     udisks2
     udiskie
     xdg-utils
+    xdg-user-dirs
 
     bluez
     bluez-utils
