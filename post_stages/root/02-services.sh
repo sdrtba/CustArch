@@ -12,3 +12,6 @@ systemctl enable fstrim.timer
 
 systemctl enable grub-btrfsd
 grub-mkconfig -o /boot/grub/grub.cfg
+
+sudo setcap cap_net_admin,cap_net_bind_service+ep $(which clash-verge)
+sudo systemctl enable nftables

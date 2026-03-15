@@ -44,6 +44,7 @@ packages=(
     bluez-utils
     blueman
     network-manager-applet
+    nftables
 
     power-profiles-daemon
     brightnessctl
