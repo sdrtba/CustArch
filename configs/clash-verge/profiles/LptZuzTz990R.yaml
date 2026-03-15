@@ -1,0 +1,120 @@
+proxies:
+
+  - name: Germany
+    type: vless
+    server: 212.11.62.166
+    port: 8443
+    uuid: 3681fbf9-1a37-46cf-913c-440087aed141
+
+    network: tcp
+    tls: true
+    udp: true
+
+    flow: xtls-rprx-vision
+
+    servername: ya.ru
+    client-fingerprint: edge
+
+    reality-opts:
+      public-key: gbP2G_j0cmFvgmWaWLpzZavEzQiPzky-fApmbF2BWxU
+      short-id: 58e3e82f80
+
+
+  - name: Netherlands-1
+    type: vless
+    server: ya19.shukafish.ru
+    port: 443
+    uuid: 3681fbf9-1a37-46cf-913c-440087aed141
+
+    network: tcp
+    tls: true
+    udp: true
+
+    flow: xtls-rprx-vision
+
+    servername: SNI
+    client-fingerprint: chrome
+
+    reality-opts:
+      public-key: gbP2G_j0cmFvgmWaWLpzZavEzQiPzky-fApmbF2BWxU
+      short-id: f961007b26f6
+
+
+  - name: Netherlands-2
+    type: vless
+    server: ya29.shukafish.ru
+    port: 443
+    uuid: 3681fbf9-1a37-46cf-913c-440087aed141
+
+    network: tcp
+    tls: true
+    udp: true
+
+    flow: xtls-rprx-vision
+
+    servername: SNI
+
+    reality-opts:
+      public-key: gbP2G_j0cmFvgmWaWLpzZavEzQiPzky-fApmbF2BWxU
+      short-id: c6fe
+
+proxy-groups:
+  - name: PROXY
+    type: select
+    proxies:
+      - Germany
+      - Netherlands-1
+      - Netherlands-2
+
+  - name: AUTO
+    type: url-test
+    proxies:
+      - Germany
+      - Netherlands-1
+      - Netherlands-2
+
+    url: http://www.gstatic.com/generate_204
+    interval: 300
+
+rules:
+# localhost
+  - DOMAIN,localhost,DIRECT
+  - IP-CIDR,127.0.0.1/32,DIRECT
+  - IP-CIDR6,::1/128,DIRECT
+
+# local networks
+  - IP-CIDR,192.168.0.0/16,DIRECT
+  - IP-CIDR,10.0.0.0/8,DIRECT
+  - IP-CIDR,172.16.0.0/12,DIRECT
+
+# твоё PAC
+  - DOMAIN-SUFFIX,2ip.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,istu.ru,DIRECT,no-resolve
+  - DOMAIN,sso.ya.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,rutube.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,kinopoisk.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,vk.com,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,reddit.com,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,aperisolve.com,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,dom.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,nalog.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,pikuco.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,cardlink.link,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,caplag.ru,DIRECT,no-resolve
+  - DOMAIN-SUFFIX,ozon.ru,DIRECT,no-resolve
+
+# yandex rules
+  - DOMAIN-KEYWORD,yandex,DIRECT,no-resolve
+  - DOMAIN-KEYWORD,yastatic,DIRECT,no-resolve
+  - DOMAIN-KEYWORD,ya,DIRECT,no-resolve
+
+# default
+  - MATCH,PROXY
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: [80,8080-8880]
+    TLS:
+      ports: [443,8443]

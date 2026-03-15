@@ -16,4 +16,4 @@ cd "$build_dir"
 rustup default stable
 makepkg -si --noconfirm
 
-paru -Syu --noconfirm --needed wlogout timeshift-autosnap
+paru -Syu --noconfirm --needed wlogout timeshift-autosnap clash-verge-rev-bin
