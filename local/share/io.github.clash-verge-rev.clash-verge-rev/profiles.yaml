@@ -1,0 +1,10 @@
+# Profiles Config for Clash Verge
+
+current: profile
+items:
+- uid: profile
+  type: local
+  name: profile.yaml
+  file: profile.yaml
+  updated: 1773069420
+  

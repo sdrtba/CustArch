@@ -5,3 +5,6 @@ load_config
 
 mkdir -p "$HOME/.config"
 cp -r "$CONFIG_DIR/"* "$HOME/.config/"
+
+mkdir -p "$HOME/.local/"
+cp -r "$LOCAL_DIR/"* "$HOME/.local/"
