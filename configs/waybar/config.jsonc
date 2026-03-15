@@ -1,124 +1,297 @@
+/////////////////////////////////
+//                             //
+//  // Waybar configuration//  //
+//                             //
+/////////////////////////////////
+
 {
   "layer": "top",
   "position": "top",
-  "margin-bottom": -10,
-  "spacing": 0,
-  "modules-left": ["hyprland/workspaces", "custom/uptime", "cpu"],
+  "height": 38,
+  "spacing": 2,
+  "margin-top": 0,
+  "margin-bottom": 0,
+  "reload_style_on_change": true,
 
-  "modules-center": ["clock"],
+  /////////////////////////////////////////////
+  //                                         //
+  //  // Choose the order of the modules //  //
+  //                                         //
+  /////////////////////////////////////////////
 
+  "modules-left": [
+    "custom/launcher",
+    "custom/firefox",
+    "custom/terminal",
+    // "custom/code",
+    // "custom/music",
+    "custom/dolphin",
+    // "custom/todo",
+  ],
+  "modules-center": ["hyprland/workspaces"],
   "modules-right": [
-    "custom/pomodoro",
-    "bluetooth",
-    "network",
+    "keyboard-state",
+    // "custom/countdown",
+    "group/group-tools",
     "pulseaudio",
     "backlight",
-    "battery",
+    "tray",
+    "clock",
+    "group/group-power",
   ],
 
+  ///////////////////////////////////
+  //                               //
+  //  // Modules configuration//   //
+  //                               //
+  ///////////////////////////////////
+
+  //   "wlr/taskbar": {
+  //     "format": "{icon}",
+  //     "icon-size": 20,
+  //     "icon-theme": "Numix-Circle",
+  //     "tooltip-format": "{title:.50}",
+  //     "on-click": "minimize-raise",
+  //     "on-click-middle": "close",
+  //     "on-click-right": "fullscreen",
+  //   },
+
   "hyprland/workspaces": {
-    "format": "{name}: {icon}",
+    "format": "{icon}",
     "format-icons": { "active": "", "default": "" },
+    "on-click": "activate",
+    "sort-by-number": true,
   },
 
-  "bluetooth": {
-    "format": "󰂲",
-    "format-on": "{icon}",
-    "format-off": "{icon}",
-    "format-connected": "{icon}",
-    "format-icons": { "on": "󰂯", "off": "󰂲", "connected": "󰂱" },
-    "on-click": "blueman-manager",
-    "tooltip-format-connected": "{device_enumerate}",
+  "keyboard-state": {
+    "capslock": true,
+    "format": "{icon}",
+    "format-icons": { "locked": " Caps ", "unlocked": "" },
   },
 
-  "custom/music": {
-    "format": "  {}",
-    "escape": true,
-    "interval": 5,
-    "tooltip": false,
-    "exec": "playerctl metadata --format='{{ artist }} - {{ title }}'",
-    "on-click": "playerctl play-pause",
-    "max-length": 50,
+  "idle_inhibitor": {
+    "format": "{icon}",
+    "format-icons": { "activated": "", "deactivated": "" },
   },
+
+  "tray": { "icon-size": 20, "spacing": 10 },
 
   "clock": {
-    "timezone": "Asia/Kolkata",
-    "tooltip": false,
-    "format": "{:%H:%M:%S  -  %A, %d}",
-    "interval": 1,
-  },
-
-  "network": {
-    "format-wifi": "󰤢",
-    "format-ethernet": "󰈀 ",
-    "format-disconnected": "󰤠 ",
-    "interval": 5,
-    "tooltip-format": "{essid} ({signalStrength}%)",
-    "on-click": "nm-connection-editor",
-  },
-
-  "cpu": {
-    "interval": 1,
-    "format": "  {icon0}{icon1}{icon2}{icon3} {usage:>2}%",
-    "format-icons": ["▁", "▂", "▃", "▄", "▅", "▆", "▇", "█"],
-    "on-click": "ghostty -e htop",
-  },
-
-  "memory": {
-    "interval": 30,
-    "format": "  {used:0.1f}G/{total:0.1f}G",
-    "tooltip-format": "Memory",
-  },
-
-  "custom/uptime": {
-    "format": "{}",
-    "format-icon": [""],
-    "tooltip": false,
-    "interval": 1600,
-    "exec": "$HOME/.config/waybar/scripts/uptime.sh",
+    "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
+    "format-alt": "{:%d-%m-%Y}",
+    "format": "{:%I:%M %p}",
   },
 
   "backlight": {
-    "format": "{icon}  {percent}%",
-    "format-icons": ["", "󰃜", "󰃛", "󰃞", "󰃝", "󰃟", "󰃠"],
+    "device": "acpi_video0", // Assuming acpi_video0, adjust if needed
     "tooltip": false,
+    "format": "{percent}% {icon}",
+    "format-icons": ["", ""],
+    "on-scroll-up": "brightnessctl s +5%",
+    "on-scroll-down": "brightnessctl s 5%-",
   },
 
   "pulseaudio": {
-    "format": "{icon}  {volume}%",
-    "format-muted": "",
-    "format-icons": { "default": ["", "", " "] },
+    "format": "{volume}% {icon}",
+    "tooltip": false,
+    "format-bluetooth": "{volume}% {icon}",
+    "format-bluetooth-muted": "{icon} {format_source}",
+    "format-muted": " {format_source}",
+    "format-source": "",
+    "format-source-muted": "",
+    "format-icons": {
+      "headphone": "",
+      "hands-free": "",
+      "headset": "",
+      "phone": "",
+      "portable": "",
+      "car": "",
+      "default": ["", "", ""],
+    },
     "on-click": "pavucontrol",
   },
 
-  "battery": {
-    "interval": 2,
-    "states": {
-      // "good": 95,
-      "warning": 30,
-      "critical": 15,
+  ///////////////////////////
+  //                       //
+  //  // Custom module //  //
+  //                       //
+  ///////////////////////////
+
+  //   "custom/countdown": {
+  //     "exec": "~/.config/waybar/scripts/countdown/countdown.sh",
+  //     "return-type": "json",
+  //     "format": "{}",
+  //     "interval": 3600,
+  //     "on-click-right": "foot bash ~/.config/waybar/scripts/countdown/countdown.sh interactive",
+  //     "on-scroll-up": "~/.config/waybar/scripts/countdown/countdown.sh scroll-up",
+  //     "on-scroll-down": "~/.config/waybar/scripts/countdown/countdown.sh scroll-down",
+  //   },
+
+  "group/group-tools": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "children-class": "other-apps",
+      "transition-left-to-right": false,
     },
-    "format": "{icon}  {capacity}%",
-    "format-full": "{icon}  {capacity}%",
-    "format-charging": " {capacity}%",
-    "format-plugged": " {capacity}%",
-    "format-alt": "{icon} {time}",
-    // "format-good": "", // An empty format will hide the module
-    // "format-full": "",
-    "format-icons": ["", "", "", "", ""],
+    "modules": [
+      "custom/snip",
+      "idle_inhibitor",
+      "custom/clip",
+      //   "custom/galculator",
+      //   "custom/taskmanager",
+    ],
+  },
+
+  //   "custom/todo": {
+  //     "format": "\u00a0{}",
+  //     "exec": "~/.config/waybar/scripts/todo/todo.sh",
+  //     "on-double-click": "~/.config/waybar/scripts/todo/todo.sh mark_done",
+  //     "on-click-right": "~/.config/waybar/scripts/todo/todo.sh open_tui",
+  //     "on-click-middle": "~/.config/waybar/scripts/todo/todo.sh middle_click",
+  //     "return-type": "json",
+  //     "interval": 5,
+  //     "tooltip": true,
+  //   },
+
+  ///////////////////////////
+  //                       //
+  //  // Apps section //   //
+  //                       //
+  ///////////////////////////
+
+  "group/group-apps": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "children-class": "other-apps",
+      "transition-left-to-right": true,
+    },
+    "modules": [
+      "custom/firefox",
+      "custom/terminal",
+      //   "custom/music",
+      "custom/dolphin",
+    ],
+  },
+
+  "custom/launcher": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Menu\nRight click to change theme",
+    "on-click": "killall rofi 2>/dev/null || rofi -show drun",
+    // "on-click-right": "bash ~/.config/waybar/scripts/theme.sh",
+  },
+
+  "custom/firefox": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Browser",
+    "on-click": "firefox",
+  },
+
+  "custom/terminal": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Terminal",
+    "on-click": "kitty",
+  },
+
+  //   "custom/code": {
+  //     "format": "",
+  //     "tooltip": true,
+  //     "tooltip-format": "Code Editor",
+  //     "on-click": "/opt/sublime_text/sublime_text",
+  //   },
+
+  //   "custom/taskmanager": {
+  //     "format": "",
+  //     "tooltip": true,
+  //     "tooltip-format": "Task Manager",
+  //     "on-click": "xfce4-taskmanager",
+  //   },
+
+  //   "custom/galculator": {
+  //     "format": "",
+  //     "tooltip": true,
+  //     "tooltip-format": "Galculator",
+  //     "on-click": "galculator",
+  //   },
+
+  //   "custom/music": {
+  //     "format": "",
+  //     "tooltip": true,
+  //     "tooltip-format": "Music",
+  //     "on-click": "env LD_PRELOAD=/usr/lib/spotify-adblock.so spotify --uri=%U >/dev/null 2>&1 &",
+  //     "on-click-right": "g4music",
+  //   },
+
+  "custom/dolphin": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "File Manager",
+    "on-click": "dolphin",
+  },
+
+  "custom/snip": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Screenshot",
+    "on-click": "grim -g \"$(slurp)\" ~/Pictures/$(date +%s).png",
+  },
+
+  "custom/clip": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Clipboard",
+    "on-click": "killall rofi 2>/dev/null || cliphist list | rofi -dmenu | sed -n '1p' | xargs -r cliphist decode | wl-copy",
+  },
+
+  ///////////////////////////
+  //                       //
+  //  // Power section //  //
+  //                       //
+  ///////////////////////////
+
+  "group/group-power": {
+    "orientation": "inherit",
+    "drawer": {
+      "transition-duration": 500,
+      "children-class": "not-power",
+      "transition-left-to-right": false,
+    },
+    "modules": ["custom/power", "custom/quit", "custom/lock", "custom/reboot"],
+  },
+
+  "custom/quit": {
+    "format": "󰗼",
+    "tooltip": true,
+    "tooltip-format": "Logout",
+    "on-click": "hyprctl dispatch exit",
+    // "on-click": "bash ~/.config/waybar/scripts/power.sh --logout",
   },
 
   "custom/lock": {
-    "tooltip": false,
-    "on-click": "sh -c '(sleep 0s; hyprlock)' & disown",
-    "format": "",
+    "format": "󰍁",
+    "tooltip": true,
+    "tooltip-format": "Lock",
+    "on-click": "pidof hyprlock >/dev/null || hyprlock",
+    // "on-click": "bash ~/.config/waybar/scripts/lock.sh",
   },
 
-  "custom/pomodoro": {
-    "format": "{}",
-    "return-type": "json",
-    "exec": "waybar-module-pomodoro --no-work-icons",
-    "on-click": "waybar-module-pomodoro toggle",
-    "on-click-right": "waybar-module-pomodoro reset",
+  "custom/reboot": {
+    "format": "󰜉",
+    "tooltip": true,
+    "tooltip-format": "Reboot",
+    "on-click": "systemctl reboot",
+    // "on-click": "bash ~/.config/waybar/scripts/power.sh --reboot",
+  },
+
+  "custom/power": {
+    "format": "",
+    "tooltip": true,
+    "tooltip-format": "Shutdown",
+    "on-click": "systemctl poweroff",
+    // "on-click": "bash ~/.config/waybar/scripts/power.sh --shutdown",
   },
 }

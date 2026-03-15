@@ -15,3 +15,5 @@ git clone https://aur.archlinux.org/paru.git "$build_dir"
 cd "$build_dir"
 rustup default stable
 makepkg -si --noconfirm
+
+paru -Syu --noconfirm --needed wlogout timeshift-autosnap
