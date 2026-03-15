@@ -25,7 +25,7 @@
     "custom/terminal",
     // "custom/code",
     // "custom/music",
-    "custom/dolphin",
+    "custom/dolphin"
     // "custom/todo",
   ],
   "modules-center": ["hyprland/workspaces"],
@@ -37,7 +37,7 @@
     "backlight",
     "tray",
     "clock",
-    "group/group-power",
+    "group/group-power"
   ],
 
   ///////////////////////////////////
@@ -60,18 +60,18 @@
     "format": "{icon}",
     "format-icons": { "active": "", "default": "" },
     "on-click": "activate",
-    "sort-by-number": true,
+    "sort-by-number": true
   },
 
   "keyboard-state": {
     "capslock": true,
     "format": "{icon}",
-    "format-icons": { "locked": " Caps ", "unlocked": "" },
+    "format-icons": { "locked": " Caps ", "unlocked": "" }
   },
 
   "idle_inhibitor": {
     "format": "{icon}",
-    "format-icons": { "activated": "", "deactivated": "" },
+    "format-icons": { "activated": "", "deactivated": "" }
   },
 
   "tray": { "icon-size": 20, "spacing": 10 },
@@ -79,7 +79,7 @@
   "clock": {
     "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
     "format-alt": "{:%d-%m-%Y}",
-    "format": "{:%I:%M %p}",
+    "format": "{:%I:%M %p}"
   },
 
   "backlight": {
@@ -88,7 +88,7 @@
     "format": "{percent}% {icon}",
     "format-icons": ["", ""],
     "on-scroll-up": "brightnessctl s +5%",
-    "on-scroll-down": "brightnessctl s 5%-",
+    "on-scroll-down": "brightnessctl s 5%-"
   },
 
   "pulseaudio": {
@@ -106,9 +106,9 @@
       "phone": "",
       "portable": "",
       "car": "",
-      "default": ["", "", ""],
+      "default": ["", "", ""]
     },
-    "on-click": "pavucontrol",
+    "on-click": "pavucontrol"
   },
 
   ///////////////////////////
@@ -132,15 +132,15 @@
     "drawer": {
       "transition-duration": 500,
       "children-class": "other-apps",
-      "transition-left-to-right": false,
+      "transition-left-to-right": false
     },
     "modules": [
       "custom/snip",
       "idle_inhibitor",
-      "custom/clip",
+      "custom/clip"
       //   "custom/galculator",
       //   "custom/taskmanager",
-    ],
+    ]
   },
 
   //   "custom/todo": {
@@ -165,21 +165,21 @@
     "drawer": {
       "transition-duration": 500,
       "children-class": "other-apps",
-      "transition-left-to-right": true,
+      "transition-left-to-right": true
     },
     "modules": [
       "custom/firefox",
       "custom/terminal",
       //   "custom/music",
-      "custom/dolphin",
-    ],
+      "custom/dolphin"
+    ]
   },
 
   "custom/launcher": {
     "format": "",
     "tooltip": true,
     "tooltip-format": "Menu\nRight click to change theme",
-    "on-click": "killall rofi 2>/dev/null || rofi -show drun",
+    "on-click": "killall rofi 2>/dev/null || rofi -show drun"
     // "on-click-right": "bash ~/.config/waybar/scripts/theme.sh",
   },
 
@@ -187,14 +187,14 @@
     "format": "",
     "tooltip": true,
     "tooltip-format": "Browser",
-    "on-click": "firefox",
+    "on-click": "firefox"
   },
 
   "custom/terminal": {
     "format": "",
     "tooltip": true,
     "tooltip-format": "Terminal",
-    "on-click": "kitty",
+    "on-click": "kitty"
   },
 
   //   "custom/code": {
@@ -230,21 +230,21 @@
     "format": "",
     "tooltip": true,
     "tooltip-format": "File Manager",
-    "on-click": "dolphin",
+    "on-click": "dolphin"
   },
 
   "custom/snip": {
     "format": "",
     "tooltip": true,
     "tooltip-format": "Screenshot",
-    "on-click": "grim -g \"$(slurp)\" ~/Pictures/$(date +%s).png",
+    "on-click": "grim -g \"$(slurp)\" ~/Pictures/$(date +%s).png"
   },
 
   "custom/clip": {
     "format": "",
     "tooltip": true,
     "tooltip-format": "Clipboard",
-    "on-click": "killall rofi 2>/dev/null || cliphist list | rofi -dmenu | sed -n '1p' | xargs -r cliphist decode | wl-copy",
+    "on-click": "killall rofi 2>/dev/null || cliphist list | rofi -dmenu | sed -n '1p' | xargs -r cliphist decode | wl-copy"
   },
 
   ///////////////////////////
@@ -258,16 +258,16 @@
     "drawer": {
       "transition-duration": 500,
       "children-class": "not-power",
-      "transition-left-to-right": false,
+      "transition-left-to-right": false
     },
-    "modules": ["custom/power", "custom/quit", "custom/lock", "custom/reboot"],
+    "modules": ["custom/power", "custom/quit", "custom/lock", "custom/reboot"]
   },
 
   "custom/quit": {
     "format": "󰗼",
     "tooltip": true,
     "tooltip-format": "Logout",
-    "on-click": "hyprctl dispatch exit",
+    "on-click": "hyprctl dispatch exit"
     // "on-click": "bash ~/.config/waybar/scripts/power.sh --logout",
   },
 
@@ -275,7 +275,7 @@
     "format": "󰍁",
     "tooltip": true,
     "tooltip-format": "Lock",
-    "on-click": "pidof hyprlock >/dev/null || hyprlock",
+    "on-click": "pidof hyprlock >/dev/null || hyprlock"
     // "on-click": "bash ~/.config/waybar/scripts/lock.sh",
   },
 
@@ -283,7 +283,7 @@
     "format": "󰜉",
     "tooltip": true,
     "tooltip-format": "Reboot",
-    "on-click": "systemctl reboot",
+    "on-click": "systemctl reboot"
     // "on-click": "bash ~/.config/waybar/scripts/power.sh --reboot",
   },
 
@@ -291,7 +291,7 @@
     "format": "",
     "tooltip": true,
     "tooltip-format": "Shutdown",
-    "on-click": "systemctl poweroff",
+    "on-click": "systemctl poweroff"
     // "on-click": "bash ~/.config/waybar/scripts/power.sh --shutdown",
-  },
+  }
 }
