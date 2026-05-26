@@ -2,6 +2,7 @@
 set -euo pipefail
 source "$LIB_DIR/common.sh"
 load_config
+require_root
 
 if ! command -v nmcli >/dev/null 2>&1; then
     echo "[!] nmcli not found, skipping Wi-Fi setup."

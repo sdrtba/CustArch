@@ -1,11 +1,12 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
-CHROOT_DIR="$SCRIPT_DIR/chroot_stages"
-LIB_DIR="$SCRIPT_DIR/lib"
-CONFIG_FILE="$SCRIPT_DIR/install.conf"
-export SCRIPT_DIR CHROOT_DIR LIB_DIR CONFIG_FILE
+ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/../.." && pwd)"
+STAGES_DIR="$ROOT_DIR/stages"
+CHROOT_DIR="$STAGES_DIR/chroot"
+LIB_DIR="$ROOT_DIR/lib"
+CONFIG_FILE="$ROOT_DIR/settings.conf"
+export ROOT_DIR STAGES_DIR CHROOT_DIR LIB_DIR CONFIG_FILE
 
 source "$LIB_DIR/common.sh"
 load_config

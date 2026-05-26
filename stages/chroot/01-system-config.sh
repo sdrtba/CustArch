@@ -24,7 +24,6 @@ systemctl enable reflector.timer
 
 if [ "$VM" ]; then
     systemctl enable sshd
-    systemctl start sshd
 fi
 
 #en_US.UTF-8 UTF-8

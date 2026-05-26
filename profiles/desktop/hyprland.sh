@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-set -euo pipefail
-source "$LIB_DIR/common.sh"
-load_config
 
-packages=(
+# shellcheck disable=SC2034
+DESKTOP_PACKAGES=(
     wayland
     hyprland
     hyprlock
@@ -67,14 +65,11 @@ packages=(
     fzf
     fastfetch
     firefox
+    htop
+    man-db
+    man-pages
+    texinfo
+    unzip
+    ufw
+    rustup
 )
-
-packages+=(
-    mesa vulkan-radeon libva-mesa-driver \
-    git htop wget curl man-db man-pages texinfo \
-	unzip ufw fastfetch rustup
-)
-
-if [[ ${#packages[@]} -gt 0 ]]; then
-    pacman -S --needed --noconfirm "${packages[@]}"
-fi
