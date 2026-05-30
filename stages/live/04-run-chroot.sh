@@ -5,7 +5,7 @@ load_config
 require_root
 
 main() {
-    local target_dir="/mnt/tmp/$PROJECT_NAME"
+    local target_dir="/mnt/root/$PROJECT_NAME"
 
     mountpoint -q /mnt || die "/mnt is not mounted. Run 02-filesystem.sh first."
 
@@ -13,7 +13,7 @@ main() {
     mkdir -p "$target_dir"
     cp -a "$ROOT_DIR"/. "$target_dir"/
 
-    arch-chroot /mnt /bin/bash -lc "cd /tmp/$PROJECT_NAME && ./stages/chroot/00-entry.sh"
+    arch-chroot /mnt /bin/bash -lc "cd /root/$PROJECT_NAME && ./stages/chroot/00-entry.sh"
 }
 
 main "$@"
