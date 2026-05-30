@@ -1,36 +1,58 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+source "$ROOT_DIR/lib/paths.sh"
 source "$LIB_DIR/common.sh"
 load_config
 require_root
 
-if ! command -v nmcli >/dev/null 2>&1; then
-    echo "[!] nmcli not found, skipping Wi-Fi setup."
-    exit 0
-fi
+choose_wifi() {
+    local -a networks menu
+    local line ssid security signal selected
 
-if ! nmcli -t -f DEVICE,TYPE device status | grep -q ':wifi$'; then
-    echo "[*] No Wi-Fi adapter found, skipping Wi-Fi setup."
-    exit 0
-fi
+    nmcli device wifi rescan >/dev/null 2>&1 || true
+    mapfile -t networks < <(nmcli -t --escape yes -f SSID,SECURITY,SIGNAL device wifi list | awk -F: '$1 != ""')
+    ((${#networks[@]} > 0)) || {
+        log "No Wi-Fi networks found, skipping Wi-Fi setup."
+        return 1
+    }
 
-nmcli radio wifi on >/dev/null 2>&1 || true
+    for line in "${networks[@]}"; do
+        IFS=: read -r ssid security signal <<< "$line"
+        menu+=("$ssid  ${security:-open}  ${signal:-0}%")
+    done
 
-echo "[*] Available Wi-Fi networks:"
-nmcli --colors no --fields IN-USE,SSID,SECURITY,SIGNAL device wifi list || true
-echo
-read -rp "Wi-Fi SSID (leave empty to skip): " WIFI_SSID
+    choose_from_list "Choose Wi-Fi network" selected "${menu[@]}"
+    WIFI_SSID="${selected%%  *}"
+    log "Selected Wi-Fi network: $WIFI_SSID"
+}
 
-if [[ -z "$WIFI_SSID" ]]; then
-    echo "[*] Wi-Fi setup skipped."
-    exit 0
-fi
+connect_wifi() {
+    local wifi_password
 
-read -rsp "Wi-Fi password (leave empty for open network): " WIFI_PASSWORD
-echo
+    read -rsp "Wi-Fi password (leave empty for open network): " wifi_password
+    echo
 
-if [[ -n "$WIFI_PASSWORD" ]]; then
-    nmcli device wifi connect "$WIFI_SSID" password "$WIFI_PASSWORD"
-else
-    nmcli device wifi connect "$WIFI_SSID"
-fi
+    if [[ -n "$wifi_password" ]]; then
+        nmcli device wifi connect "$WIFI_SSID" password "$wifi_password"
+    else
+        nmcli device wifi connect "$WIFI_SSID"
+    fi
+}
+
+main() {
+    if ! command -v nmcli >/dev/null 2>&1; then
+        warn "nmcli not found, skipping Wi-Fi setup."
+        return 0
+    fi
+
+    if ! nmcli -t -f DEVICE,TYPE device status | grep -q ':wifi$'; then
+        log "No Wi-Fi adapter found, skipping Wi-Fi setup."
+        return 0
+    fi
+
+    nmcli radio wifi on >/dev/null 2>&1 || true
+    choose_wifi || return 0
+    connect_wifi
+}
+
+main "$@"

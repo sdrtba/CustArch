@@ -1,7 +1,43 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2034
-DESKTOP_PACKAGES=(
+PACSTRAP_PACKAGES=(
+    base
+    base-devel
+    linux
+    linux-firmware
+    efibootmgr
+    grub
+    os-prober
+    zram-generator
+    sudo
+    reflector
+    networkmanager
+    nano
+    vim
+    curl
+    wget
+    git
+    openssh
+)
+
+if [[ "$FS_TYPE" = "btrfs" ]]; then
+    PACSTRAP_PACKAGES+=(grub-btrfs btrfs-progs timeshift)
+fi
+
+case "$VM" in
+    VBOX)
+        PACSTRAP_PACKAGES+=(virtualbox-guest-utils linux-headers)
+        ;;
+    VMWare)
+        PACSTRAP_PACKAGES+=(open-vm-tools)
+        ;;
+esac
+
+PACMAN_PACKAGES=(
+    mesa
+    vulkan-radeon
+    libva-mesa-driver
+
     wayland
     hyprland
     hyprlock
@@ -72,4 +108,10 @@ DESKTOP_PACKAGES=(
     unzip
     ufw
     rustup
+)
+
+AUR_PACKAGES=(
+    wlogout
+    timeshift-autosnap
+    clash-verge-rev-bin
 )

@@ -1,8 +1,12 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+source "$ROOT_DIR/lib/paths.sh"
 source "$LIB_DIR/common.sh"
 load_config
 
-copy_tree_contents "$CONFIG_DIR" "$HOME/.config"
+main() {
+    copy_tree_contents "$CONFIG_DIR" "$HOME/.config"
+    copy_tree_contents "$LOCAL_DIR" "$HOME/.local"
+}
 
-copy_tree_contents "$LOCAL_DIR" "$HOME/.local"
+main "$@"

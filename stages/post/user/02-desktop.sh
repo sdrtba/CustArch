@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+source "$ROOT_DIR/lib/paths.sh"
 source "$LIB_DIR/common.sh"
 load_config
 
-echo "[*] Desktop stage placeholder."
+main() {
+    log "Desktop stage placeholder."
+}
+
+main "$@"

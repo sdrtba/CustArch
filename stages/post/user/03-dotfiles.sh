@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
+source "$ROOT_DIR/lib/paths.sh"
 source "$LIB_DIR/common.sh"
 load_config
 
-# Link or copy dotfiles into $HOME here.
+main() {
+    log "Dotfiles stage placeholder."
+}
+
+main "$@"
