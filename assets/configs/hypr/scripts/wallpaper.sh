@@ -1,7 +1,10 @@
 #!/bin/bash
+set -Eeuo pipefail
 
-WALL=$(find ~/.config/wallpapers -type f | shuf -n 1)
+[[ -d "$HOME/.config/wallpapers" ]] || exit 0
+WALL="$(find "$HOME/.config/wallpapers" -type f | shuf -n 1)"
+[[ -n "$WALL" ]] || exit 0
 
 swww img "$WALL" \
---transition-type grow \
---transition-duration 1
+    --transition-type grow \
+    --transition-duration 1

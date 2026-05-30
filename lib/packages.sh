@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# shellcheck disable=SC2034
 PACSTRAP_PACKAGES=(
     base
     base-devel
@@ -33,6 +34,7 @@ case "$VM" in
         ;;
 esac
 
+# shellcheck disable=SC2034
 PACMAN_PACKAGES=(
     mesa
     vulkan-radeon
@@ -110,8 +112,8 @@ PACMAN_PACKAGES=(
     rustup
 )
 
+# shellcheck disable=SC2034
 AUR_PACKAGES=(
-    wlogout
     timeshift-autosnap
     clash-verge-rev-bin
 )

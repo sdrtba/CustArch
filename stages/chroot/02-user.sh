@@ -5,6 +5,8 @@ load_config
 require_root
 
 main() {
+    local target_repo
+
     echo "Set root password"
     passwd
 
@@ -19,12 +21,12 @@ main() {
     echo "$USERNAME ALL=(ALL) ALL" > "/etc/sudoers.d/$USERNAME"
     chmod 0440 "/etc/sudoers.d/$USERNAME"
 
-    TARGET_REPO="/home/$USERNAME/$PROJECT_NAME"
+    target_repo="/home/$USERNAME/$PROJECT_NAME"
 
-    rm -rf "$TARGET_REPO"
-    mkdir -p "$TARGET_REPO"
-    cp -a "$ROOT_DIR"/. "$TARGET_REPO"/
-    chown -R "$USERNAME":"$USERNAME" "$TARGET_REPO"
+    rm -rf "$target_repo"
+    mkdir -p "$target_repo"
+    cp -a "$ROOT_DIR"/. "$target_repo"/
+    chown -R "$USERNAME":"$USERNAME" "$target_repo"
 }
 
 main "$@"

@@ -30,6 +30,9 @@ make_partitions() {
 }
 
 main() {
+    [[ "$EFI_PART" != "$ROOT_PART" ]] || die "EFI_PART and ROOT_PART must be different."
+    mountpoint -q /mnt && die "/mnt is already mounted. Unmount it before running this stage."
+
     choose_from_list "Choose root filesystem" FS_TYPE \
         "ext4" \
         "btrfs"

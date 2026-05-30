@@ -28,15 +28,12 @@ main() {
     fi
     case "$VM" in
         VBOX)
-        systemctl enable vboxservice
-        ;;
+            systemctl enable vboxservice
+            ;;
         VMWare)
-        systemctl enable vmtoolsd
-        ;;
+            systemctl enable vmtoolsd
+            ;;
     esac
 }
 
 main "$@"
-
-#en_US.UTF-8 UTF-8
-#ru_RU.UTF-8 UTF-8

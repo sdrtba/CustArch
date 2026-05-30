@@ -7,6 +7,8 @@ require_root
 main() {
     local target_dir="/mnt/tmp/$PROJECT_NAME"
 
+    mountpoint -q /mnt || die "/mnt is not mounted. Run 02-filesystem.sh first."
+
     rm -rf "$target_dir"
     mkdir -p "$target_dir"
     cp -a "$ROOT_DIR"/. "$target_dir"/
