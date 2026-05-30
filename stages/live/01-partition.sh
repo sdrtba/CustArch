@@ -52,7 +52,7 @@ main() {
     choose_disk
     confirm_dialog "This will erase or modify partition data on: $DISK" "ERASE"
 
-    cfdisk "$DISK"
+    cfdisk "$DISK" </dev/tty >/dev/tty 2>&1
 
     echo
     log "Resulting partition table:"

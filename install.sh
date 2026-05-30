@@ -22,6 +22,10 @@ prepare() {
     load_config
     require_root
 
+    if [[ -r /dev/tty ]]; then
+        exec </dev/tty
+    fi
+
     exec > >(tee -a "$LOG_FILE") 2>&1
 }
 
