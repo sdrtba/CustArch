@@ -57,7 +57,6 @@ PACMAN_PACKAGES=(
     swaync
     rofi-wayland
     swww
-    wlogout
 
     pipewire
     wireplumber
