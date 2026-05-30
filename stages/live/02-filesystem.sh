@@ -4,20 +4,16 @@ source "$LIB_DIR/common.sh"
 load_config
 require_root
 
-choose_fs() {
-  local fs
-  choose_from_list "Choose root filesystem" fs \
-      "ext4" \
-      "btrfs"
-  FS_TYPE="$fs"
-  log "Selected filesystem: $FS_TYPE"
-}
+make_partitions() {
+  if [[ "$FS_TYPE" = "ext4" ]]; then
+    mkfs.ext4 -F "$ROOT_PART"
+    mkdir -p /mnt
+    mount "$ROOT_PART" /mnt
+  elif [[ "$FS_TYPE" = "btrfs" ]]; then
+    mkfs.btrfs -f "$ROOT_PART"
+    mkdir -p /mnt
+    mount "$ROOT_PART" /mnt
 
-mount_partitions() {
-  mkdir -p /mnt
-  mount "$ROOT_PART" /mnt
-
-  if [ "$FS_TYPE" = "btrfs" ]; then
     btrfs subvolume create /mnt/@
     btrfs subvolume create /mnt/@home
     umount /mnt
@@ -25,6 +21,8 @@ mount_partitions() {
     mount -o noatime,compress=zstd,subvol=@ "$ROOT_PART" /mnt
     mkdir -p /mnt/{home,efi}
     mount -o noatime,compress=zstd,subvol=@home "$ROOT_PART" /mnt/home
+  else
+    die "Unsupported filesystem: $FS_TYPE"
   fi
 
   mkdir -p /mnt/efi
@@ -32,12 +30,10 @@ mount_partitions() {
 }
 
 main() {
-  [[ -b "$EFI_PART" ]] || die "EFI_PART is not a block device: ${EFI_PART:-empty}"
-  [[ -b "$ROOT_PART" ]] || die "ROOT_PART is not a block device: ${ROOT_PART:-empty}"
-  [[ "$EFI_PART" != "$ROOT_PART" ]] || die "EFI_PART and ROOT_PART must be different."
-  mountpoint -q /mnt && die "/mnt is already mounted. Unmount it before running this stage."
-
-  choose_fs
+  choose_from_list "Choose root filesystem" FS_TYPE \
+      "ext4" \
+      "btrfs"
+  log "Selected filesystem: $FS_TYPE"
   save_config_var FS_TYPE "$FS_TYPE"
 
   log "EFI partition: $EFI_PART"
@@ -50,19 +46,7 @@ main() {
     save_config_var DUAL_BOOT "YES"
   fi
 
-  case "$FS_TYPE" in
-    ext4)
-      mkfs.ext4 -F "$ROOT_PART"
-      ;;
-    btrfs)
-      mkfs.btrfs -f "$ROOT_PART"
-      ;;
-    *)
-      die "Unsupported filesystem: $FS_TYPE"
-      ;;
-  esac
-
-  mount_partitions
+  make_partitions
 }
 
 main "$@"

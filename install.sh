@@ -11,33 +11,50 @@ ansi_art='                           ▄▄▄
 ███   ███  ███   ███        ███       ███       ███   ███   ███   ███  ███   ███   ███   ███
 ███████▀    ▀█████▀    ▀█████▀        ███       ███   █▀    ███   ███  ███████▀    ███   █▀
                                                             ███   █▀                         '
-clear
-printf '\n%s\n' "$ansi_art"
 
-ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-SCRIPT_DIR="$ROOT_DIR"
-STAGES_DIR=$ROOT_DIR/stages
-LIVE_DIR=$STAGES_DIR/live
-CHROOT_DIR=$STAGES_DIR/chroot
-POST_DIR=$STAGES_DIR/post
-LIB_DIR=$ROOT_DIR/lib
-CONFIG_FILE=$ROOT_DIR/settings.conf
-LOG_FILE=$ROOT_DIR/install.log
-export ROOT_DIR SCRIPT_DIR STAGES_DIR LIVE_DIR CHROOT_DIR POST_DIR LIB_DIR CONFIG_FILE LOG_FILE
+prepare() {
+  clear
+  printf '\n%s\n' "$ansi_art"
 
-exec > >(tee -a "$LOG_FILE") 2>&1
+  ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+  source "$ROOT_DIR/lib/paths.sh"
+  source "$LIB_DIR/common.sh"
+  load_config
+  require_root
 
-source "$LIB_DIR/common.sh"
-load_config
-require_root
+  exec > >(tee -a "$LOG_FILE") 2>&1
+}
 
-mapfile -t stage_scripts < <(find "$LIVE_DIR" -maxdepth 1 -type f -name '*.sh' | sort)
-log "Running ${#stage_scripts[@]} stage(s)..."
-for stage_script in "${stage_scripts[@]}"; do
-    stage_name="$(basename "$stage_script")"
-    log "Running $stage_name..."
-    bash "$stage_script"
-done
+finish() {
+  if mountpoint -q /mnt; then
+    umount -R /mnt
+  else
+    warn "/mnt is not mounted, skipping unmount."
+  fi
 
-log "Installation stages finished."
-log "Reboot and start postinstall.sh to complete the installation."
+  read -rp "Reboot now? [y/N]: " REBOOT_CONFIRM
+  if [[ "$REBOOT_CONFIRM" =~ ^[Yy]$ ]]; then
+    reboot
+  fi
+}
+
+main() {
+  prepare
+
+  mapfile -t stage_scripts < <(find "$LIVE_DIR" -maxdepth 1 -type f -name '*.sh' | sort)
+  log "Running ${#stage_scripts[@]} stage(s)..."
+  for stage_script in "${stage_scripts[@]}"; do
+      stage_name="$(basename "$stage_script")"
+      log "Running $stage_name..."
+      bash "$stage_script"
+  done
+
+  log "Installation stages finished."
+  log "Reboot and start postinstall.sh to complete the installation."
+
+  copy_project
+
+  finish
+}
+
+main "$@"
