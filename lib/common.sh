@@ -14,36 +14,25 @@ die() {
     exit 1
 }
 
+tui() {
+    "$@" </dev/tty >/dev/tty 2>/dev/tty
+}
+
 require_root() {
     (( EUID == 0 )) || die "This stage must be run as root."
+}
+
+require_user() {
+    local username="$1"
+
+    [[ -n "$username" ]] || die "Username is not set."
+    [[ "$(id -un)" == "$username" ]] || die "Run this phase as $username."
 }
 
 require_file() {
     local file="$1"
     [[ -f "$file" ]] || die "Required file not found: $file"
     [[ -r "$file" ]] || die "Required file is not readable: $file"
-}
-
-load_config() {
-    require_file "$CONFIG_FILE"
-    source "$CONFIG_FILE"
-    : "${FS_TYPE:=ext4}"
-    : "${VM:=}"
-    export FS_TYPE VM
-}
-
-save_config_var() {
-    local key="$1"
-    local value="$2"
-    local escaped_value
-    escaped_value="${value//\\/\\\\}"
-    escaped_value="${escaped_value//\"/\\\"}"
-
-    if grep -q "^${key}=" "$CONFIG_FILE"; then
-        sed -i "s|^${key}=.*|${key}=\"${escaped_value}\"|" "$CONFIG_FILE"
-    else
-        echo "${key}=\"${escaped_value}\"" >> "$CONFIG_FILE"
-    fi
 }
 
 pacman_install() {

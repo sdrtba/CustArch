@@ -1,17 +1,16 @@
 #!/usr/bin/env bash
 
-# shellcheck disable=SC2034
 PACSTRAP_PACKAGES=(
     base
     base-devel
     linux
     linux-firmware
+    amd-ucode
+    btrfs-progs
+    dosfstools
     efibootmgr
-    grub
-    os-prober
     zram-generator
     sudo
-    reflector
     networkmanager
     nano
     vim
@@ -21,42 +20,18 @@ PACSTRAP_PACKAGES=(
     openssh
 )
 
-if [[ "$FS_TYPE" = "btrfs" ]]; then
-    PACSTRAP_PACKAGES+=(grub-btrfs btrfs-progs timeshift)
-fi
-
-case "$VM" in
-    VBOX)
-        PACSTRAP_PACKAGES+=(virtualbox-guest-utils linux-headers)
-        ;;
-    VMWare)
-        PACSTRAP_PACKAGES+=(open-vm-tools)
-        ;;
-esac
-
-# shellcheck disable=SC2034
-PACMAN_PACKAGES=(
+PACMAN_COMMON_PACKAGES=(
     mesa
     vulkan-radeon
     libva-mesa-driver
 
     wayland
-    hyprland
-    hyprlock
-    hypridle
-    hyprpicker
-    hyprpolkitagent
     xorg-xwayland
     xdg-desktop-portal
-    xdg-desktop-portal-hyprland
     qt5-wayland
     qt6-wayland
 
     kitty
-    waybar
-    swaync
-    rofi-wayland
-    swww
 
     pipewire
     wireplumber
@@ -109,9 +84,20 @@ PACMAN_PACKAGES=(
     unzip
     ufw
     rustup
+
+    hyprland
+    hyprlock
+    hypridle
+    hyprpicker
+    hyprpolkitagent
+    xdg-desktop-portal-hyprland
+
+    waybar
+    swaync
+    rofi-wayland
+    swww
 )
 
-# shellcheck disable=SC2034
 AUR_PACKAGES=(
     timeshift-autosnap
     clash-verge-rev-bin

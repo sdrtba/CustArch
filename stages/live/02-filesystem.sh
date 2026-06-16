@@ -1,55 +1,44 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
-source "$LIB_DIR/common.sh"
-load_config
-require_root
 
-make_partitions() {
-    if [[ "$FS_TYPE" = "ext4" ]]; then
-        mkfs.ext4 -F "$ROOT_PART"
-        mkdir -p /mnt
-        mount "$ROOT_PART" /mnt
-    elif [[ "$FS_TYPE" = "btrfs" ]]; then
-        mkfs.btrfs -f "$ROOT_PART"
-        mkdir -p /mnt
-        mount "$ROOT_PART" /mnt
+MOUNT_OPTIONS="noatime,compress=zstd"
 
-        btrfs subvolume create /mnt/@
-        btrfs subvolume create /mnt/@home
-        umount /mnt
+create_subvolumes() {
+    mount "$ROOT_PART" /mnt
 
-        mount -o noatime,compress=zstd,subvol=@ "$ROOT_PART" /mnt
-        mkdir -p /mnt/{home,efi}
-        mount -o noatime,compress=zstd,subvol=@home "$ROOT_PART" /mnt/home
-    else
-        die "Unsupported filesystem: $FS_TYPE"
-    fi
+    btrfs subvolume create /mnt/@
+    btrfs subvolume create /mnt/@home
+    btrfs subvolume create /mnt/@snapshots
+    btrfs subvolume create /mnt/@var_log
+    btrfs subvolume create /mnt/@pkg
 
-    mkdir -p /mnt/efi
-    mount "$EFI_PART" /mnt/efi
+    umount /mnt
 }
 
-main() {
-    [[ "$EFI_PART" != "$ROOT_PART" ]] || die "EFI_PART and ROOT_PART must be different."
-    mountpoint -q /mnt && die "/mnt is already mounted. Unmount it before running this stage."
+mount_filesystems() {
+    mount -o "$MOUNT_OPTIONS,subvol=@" "$ROOT_PART" /mnt
 
-    choose_from_list "Choose root filesystem" FS_TYPE \
-        "ext4" \
-        "btrfs"
-    log "Selected filesystem: $FS_TYPE"
-    save_config_var FS_TYPE "$FS_TYPE"
-
-    log "EFI partition: $EFI_PART"
-    read -rp "Format EFI partition? Use yes only for fresh ESP, no for dual-boot. [y/N]: " CONFIRM
-    if [[ "$CONFIRM" =~ ^[Yy]$ ]]; then
-        mkfs.fat -F32 "$EFI_PART"
-        save_config_var DUAL_BOOT "NO"
-    else
-        log "Skipping EFI partition format."
-        save_config_var DUAL_BOOT "YES"
-    fi
-
-    make_partitions
+    mkdir -p /mnt/{home,.snapshots,var/log,var/cache/pacman/pkg,boot}
+    mount -o "$MOUNT_OPTIONS,subvol=@home" "$ROOT_PART" /mnt/home
+    mount -o "$MOUNT_OPTIONS,subvol=@snapshots" "$ROOT_PART" /mnt/.snapshots
+    mount -o "$MOUNT_OPTIONS,subvol=@var_log" "$ROOT_PART" /mnt/var/log
+    mount -o "$MOUNT_OPTIONS,subvol=@pkg" "$ROOT_PART" /mnt/var/cache/pacman/pkg
+    mount "$EFI_PART" /mnt/boot
 }
 
-main "$@"
+mountpoint -q /mnt && die "/mnt is already mounted."
+
+log "Formatting root partition: $ROOT_PART"
+mkfs.btrfs -f "$ROOT_PART"
+
+if [[ "$FORMAT_ESP" == "yes" ]]; then
+    log "Formatting EFI System Partition: $EFI_PART"
+    mkfs.fat -F32 "$EFI_PART"
+else
+    log "Keeping existing EFI System Partition: $EFI_PART"
+fi
+
+mkdir -p /mnt
+create_subvolumes
+mount_filesystems
+
+save_state_var ROOT_UUID "$(blkid -s UUID -o value "$ROOT_PART")"
