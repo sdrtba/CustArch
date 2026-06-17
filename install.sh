@@ -1,96 +1,81 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-ansi_art='                           ▄▄▄
- ▄███████  ███   ███   ▄███████  ▄███████████▄   ▄███████    ▄███████   ▄███████    ▄█   █▄
-███   ███  ███   ███  ███             ███       ███   ███   ███   ███  ███   ███   ███   ███
-███   █▀   ███   ███  ███             ███       ███   ███   ███   ███  ███   █▀    ███   ███
-███        ███   ███  ▀███████▄       ███      ▄███▄▄▄███  ▄███▄▄▄██▀  ███        ▄███▄▄▄███▄
-███        ███   ███        ███       ███      ▀███▀▀▀███  ▀███▀▀▀▀    ███       ▀▀███▀▀▀███
-███   █▄   ███   ███        ███       ███       ███   ███  ██████████  ███   █▄    ███   ███
-███   ███  ███   ███        ███       ███       ███   ███   ███   ███  ███   ███   ███   ███
-███████▀    ▀█████▀    ▀█████▀        ███       ███   █▀    ███   ███  ███████▀    ███   █▀
-                                                            ███   █▀                         '
+REPO_URL="https://github.com/sdrtba/CustArch.git"
+TARGET_DIR="/root/custarch"
 
-prepare() {
-    if [[ -t 1 ]]; then
-        clear
-    fi
-    printf '\n%s\n' "$ansi_art"
-
-    ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-    LIB_DIR="$ROOT_DIR/lib"
-    INITIAL_FILE="$ROOT_DIR/initial.conf"
-    LOG_FILE="$ROOT_DIR/install.log"
-    export ROOT_DIR LIB_DIR INITIAL_FILE LOG_FILE
-
-    source "$LIB_DIR/common.sh"
-    source "$LIB_DIR/state.sh"
-
-    (( EUID == 0 )) || die "Run this phase as root."
-    if [[ "$PHASE" == "live" ]]; then
-        init_state
-    fi
-    load_state
-
-    if [[ -r /dev/tty ]]; then
-        exec </dev/tty
-    fi
-
-    exec > >(tee -a "$LOG_FILE") 2>&1
+log() {
+    printf '[*] %s\n' "$*" >&2
 }
 
-run_stages() {
-    local -a stage_scripts
-    local stage_script stage_name
-    local stage_dir="$ROOT_DIR/stages/$PHASE"
-
-    [[ -d "$stage_dir" ]] || die "Stage directory not found: $stage_dir"
-
-    mapfile -t stage_scripts < <(find "$stage_dir" -maxdepth 1 -type f -name '*.sh' | sort)
-    ((${#stage_scripts[@]} > 0)) || die "No stages found for phase: $PHASE"
-
-    log "Running ${#stage_scripts[@]} ${PHASE} stage(s)..."
-    for stage_script in "${stage_scripts[@]}"; do
-        stage_name="${stage_script##*/}"
-        log "Running $stage_name..."
-        # shellcheck disable=SC1090
-        source "$stage_script"
-    done
+die() {
+    printf '[!] %s\n' "$*" >&2
+    exit 1
 }
 
-finish() {
-    log "$PHASE phase finished."
+require_arch_iso() {
+    [[ -f /etc/arch-release ]] || die "This does not look like Arch Linux."
+    [[ -d /run/archiso ]] || die "This script must run from the Arch Linux live ISO."
+}
 
-    [[ "$PHASE" == "live" ]] || return 0
+require_network() {
+    ping -c 1 -W 3 github.com >/dev/null 2>&1 ||
+        die "Network check failed. Connect to the network and rerun install.sh."
+}
 
-    if mountpoint -q /mnt; then
-        umount -R /mnt
-    else
-        warn "/mnt is not mounted, skipping unmount."
+ensure_git() {
+    if command -v git >/dev/null 2>&1; then
+        return 0
     fi
 
-    read -rp "Reboot now? [y/N]: " REBOOT_CONFIRM
-    if [[ "$REBOOT_CONFIRM" =~ ^[Yy]$ ]]; then
-        reboot
+    log "Installing git..."
+    pacman -Sy --needed --noconfirm git
+}
+
+is_repo_dir() {
+    local repo_dir="$1"
+
+    [[ -f "$repo_dir/start.sh" ]] &&
+        [[ -f "$repo_dir/initial.conf" ]] &&
+        [[ -d "$repo_dir/lib" ]] &&
+        [[ -d "$repo_dir/stages" ]]
+}
+
+resolve_repo_dir() {
+    local script_dir
+
+    script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+
+    if is_repo_dir "$script_dir"; then
+        printf '%s\n' "$script_dir"
+        return 0
     fi
+
+    if [[ -e "$TARGET_DIR" ]]; then
+        is_repo_dir "$TARGET_DIR" ||
+            die "$TARGET_DIR exists but is not a CustArch repository."
+        printf '%s\n' "$TARGET_DIR"
+        return 0
+    fi
+
+    ensure_git
+
+    log "Cloning repository: $REPO_URL"
+    git clone "$REPO_URL" "$TARGET_DIR"
+    printf '%s\n' "$TARGET_DIR"
 }
 
 main() {
-    PHASE="${1:-}"
-    case "$PHASE" in
-        live|chroot|firstboot|user)
-            ;;
-        *)
-            printf '[!] Usage: %s <live|chroot|firstboot|user>\n' "$0" >&2
-            exit 1
-            ;;
-    esac
-    export PHASE
+    local repo_dir
 
-    prepare
-    run_stages
-    finish
+    require_arch_iso
+    require_network
+
+    repo_dir="$(resolve_repo_dir)"
+    confirm_dialog "Start installing from LIVE phase? (yes|no): " "yes"
+    log "Starting live phase from: $repo_dir"
+    cd "$repo_dir"
+    exec ./start.sh live
 }
 
 main "$@"

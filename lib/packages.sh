@@ -18,6 +18,8 @@ PACSTRAP_PACKAGES=(
     wget
     git
     openssh
+    reflector
+    pacman-contrib
 )
 
 PACMAN_COMMON_PACKAGES=(
@@ -84,6 +86,7 @@ PACMAN_COMMON_PACKAGES=(
     unzip
     ufw
     rustup
+    timeshift
 
     hyprland
     hyprlock

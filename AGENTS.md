@@ -5,18 +5,18 @@
 ## Как устроен запуск
 
 ```text
-bootstrap.sh
-  -> install.sh live
-  -> arch-chroot /mnt /opt/custarch/install.sh chroot
+install.sh
+  -> start.sh live
+  -> arch-chroot /mnt /opt/custarch/start.sh chroot
   -> reboot
 ```
 
-`install.sh` принимает фазу, загружает общие файлы из `lib/` и по имени запускает через `source` все `.sh`-стадии из соответствующего каталога `stages/`.
+`start.sh` принимает фазу, загружает общие файлы из `lib/` и по имени запускает через `source` все `.sh`-стадии из соответствующего каталога `stages/`.
 
 ## Основные файлы
 
-- `bootstrap.sh` — подготовка репозитория в Arch ISO и запуск установки.
-- `install.sh` — общий runner фаз и стадий.
+- `install.sh` — подготовка репозитория в Arch ISO и запуск установки.
+- `start.sh` — общий runner фаз и стадий.
 - `initial.conf` — начальные настройки пользователя и системы.
 - `lib/common.sh` — сообщения, проверки, выбор и подтверждения.
 - `lib/state.sh` — чтение и изменение состояния установки.

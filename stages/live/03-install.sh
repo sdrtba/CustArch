@@ -6,9 +6,6 @@ target_state="/mnt$STATE_FILE"
 mountpoint -q /mnt || die "/mnt is not mounted."
 mountpoint -q /mnt/boot || die "/mnt/boot is not mounted."
 
-# shellcheck source=lib/packages.sh
-source "$LIB_DIR/packages.sh"
-
 log "Installing base system..."
 pacstrap -K /mnt "${PACSTRAP_PACKAGES[@]}"
 
@@ -21,4 +18,4 @@ cp -a "$ROOT_DIR"/. "$target_repo"/
 cp "$STATE_FILE" "$target_state"
 
 log "Entering installed system..."
-arch-chroot /mnt /opt/custarch/install.sh chroot
+arch-chroot /mnt /opt/custarch/start.sh chroot

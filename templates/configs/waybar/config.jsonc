@@ -32,6 +32,7 @@
   "modules-right": [
     "keyboard-state",
     // "custom/countdown",
+    "custom/pacman-updates",
     "group/group-tools",
     "pulseaudio",
     "backlight",
@@ -245,6 +246,15 @@
     "tooltip": true,
     "tooltip-format": "Clipboard",
     "on-click": "killall rofi 2>/dev/null || cliphist list | rofi -dmenu | sed -n '1p' | xargs -r cliphist decode | wl-copy"
+  },
+
+  "custom/pacman-updates": {
+    "exec": "~/.config/waybar/scripts/pacman-updates.sh",
+    "return-type": "json",
+    "format": "{}",
+    "interval": 1800,
+    "tooltip": true,
+    "on-click": "kitty -e sudo pacman -Syu"
   },
 
   ///////////////////////////

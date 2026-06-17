@@ -27,6 +27,7 @@ tooltip {
 #pulseaudio,
 #custom-snip,
 #custom-clip,
+#custom-pacman-updates,
 #custom-taskmanager,
 #custom-galculator,
 #tray,
@@ -77,13 +78,16 @@ tooltip {
 #custom-todo:hover,
 #pulseaudio:hover,
 #custom-snip:hover,
+#custom-pacman-updates:hover,
 #custom-chrome:hover,
+#custom-firefox:hover,
 #custom-terminal:hover,
 #custom-code:hover,
 #custom-taskmanager:hover,
 #custom-galculator:hover,
 #custom-music:hover,
 #custom-thunar:hover,
+#custom-dolphin:hover,
 #idle_inhibitor:hover,
 #custom-clip:hover {
   color: #1a1b26;
@@ -115,6 +119,11 @@ tooltip {
 #custom-countdown,
 #clock {
   background: #7dcfff;
+  color: #1a1b26;
+}
+
+#custom-pacman-updates.updates {
+  background: #9ece6a;
   color: #1a1b26;
 }
 

@@ -42,11 +42,6 @@ Target disk:       $DISK
 EFI partition:     $EFI_PART
 Root partition:    $ROOT_PART
 Format ESP:        $FORMAT_ESP
-
-Root filesystem:   Btrfs
-ESP mount point:   /boot
-Bootloader:        systemd-boot
-UKI path:          /boot/EFI/Linux/arch-linux.efi
 EOF
 }
 
@@ -66,11 +61,9 @@ fi
 
 print_install_plan
 
-confirmation="FORMAT $ROOT_PART"
 message="The root partition will be formatted."
 if [[ "$FORMAT_ESP" == "yes" ]]; then
-    confirmation+=" $EFI_PART"
     message="The root and EFI partitions will be formatted."
 fi
 
-confirm_dialog "$message" "$confirmation"
+confirm_dialog "$message" "FORMAT"
