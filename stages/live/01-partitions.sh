@@ -56,8 +56,11 @@ validate_partitions() {
     [[ "$EFI_PART" != "$ROOT_PART" ]] || die "EFI and ROOT partitions must be different."
 
     efi_fstype="$(blkid -s TYPE -o value "$EFI_PART")"
-    [[ "$efi_fstype" == "vfat" ]] ||
-        die "Shared EFI partition must be FAT32/vfat: $EFI_PART"
+    if [[ "$efi_fstype" != "vfat" ]]; then
+        warn "Looks like $EFI_PART not is vfat/FAT32"
+        confirm_dialog "Would you want to format $EFI_PART?" "YES"
+        mkfs.vfat "$EFI_PART"
+    fi
 
     root_fstype="$(blkid -s TYPE -o value "$ROOT_PART" 2>/dev/null || true)"
     root_parttype="$(lsblk -nrpo PARTTYPENAME "$ROOT_PART" 2>/dev/null || true)"

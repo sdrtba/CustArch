@@ -30,6 +30,7 @@ ensure_git() {
 
     log "Installing git..."
     pacman -Sy --needed --noconfirm git
+    sleep 3
 }
 
 is_repo_dir() {
