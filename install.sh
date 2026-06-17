@@ -72,10 +72,18 @@ main() {
     require_network
 
     repo_dir="$(resolve_repo_dir)"
-    confirm_dialog "Start installing from LIVE phase? (yes|no): " "yes"
-    log "Starting live phase from: $repo_dir"
-    cd "$repo_dir"
-    exec ./start.sh live
+
+    read -r -p "Start installing from LIVE phase? [yN]: " check
+    case "${check,,}" in
+        y|yes)
+            log "Starting live phase from: $repo_dir"
+            cd "$repo_dir"
+            exec ./start.sh live
+            ;;
+        *)
+            die "Installation cancelled."
+            ;;
+    esac
 }
 
 main "$@"

@@ -14,23 +14,61 @@ choose_disk() {
     log "Selected disk: $DISK"
 }
 
+reread_partition_table() {
+    if command -v partprobe >/dev/null 2>&1; then
+        partprobe "$DISK" || true
+    else
+        blockdev --rereadpt "$DISK" || true
+    fi
+
+    udevadm settle
+}
+
+run_cfdisk() {
+    command -v cfdisk >/dev/null 2>&1 || die "cfdisk is not available."
+
+    confirm_dialog "Manual partitioning can destroy data on $DISK." "PARTITION"
+
+    log "Opening cfdisk for $DISK..."
+    tui cfdisk "$DISK"
+
+    reread_partition_table
+}
+
+ask_for_cfdisk() {
+    read -r -p "Open cfdisk before choosing partitions? [yN]: " check
+    if [[ "$check" =~ ^[Yy](es)?$ ]]; then
+        run_cfdisk
+    fi
+}
+
 choose_partitions() {
     local -a partitions
     local selected
 
     mapfile -t partitions < <(lsblk -nrpo NAME,TYPE "$DISK" | awk '$2 == "part" { print $1 }')
-    ((${#partitions[@]} > 0)) || die "No partitions found on $DISK."
+    ((${#partitions[@]} >= 2)) ||
+        die "At least two partitions are required on $DISK: EFI and ROOT."
 
-    echo
-    lsblk -o NAME,SIZE,FSTYPE,LABEL,PARTLABEL,TYPE,MOUNTPOINTS "$DISK"
-
-    choose_from_list "Choose existing EFI System Partition" selected "${partitions[@]}"
+    choose_from_list "Choose EFI System Partition" selected "${partitions[@]}"
     save_state_var EFI_PART "$selected"
-    log "Selected partition: $selected"
+    log "Selected EFI partition: $selected"
 
-    choose_from_list "Choose ROOT partition to format" selected "${partitions[@]}"
+    choose_from_list "Choose ROOT partition" selected "${partitions[@]}"
     save_state_var ROOT_PART "$selected"
-    log "Selected partition: $selected"
+    log "Selected ROOT partition: $selected"
+}
+
+ask_for_efi_format() {
+    read -r -p "Format EFI System Partition? [yN]: " check
+    case "${check,,}" in
+        y|yes)
+            save_state_var FORMAT_ESP "yes"
+            ;;
+        *)
+            save_state_var FORMAT_ESP "no"
+            ;;
+    esac
 }
 
 print_install_plan() {
@@ -46,9 +84,9 @@ EOF
 }
 
 choose_disk
+ask_for_cfdisk
 choose_partitions
-choose_from_list "Format EFI System Partition:" FORMAT_ESP no yes
-save_state_var FORMAT_ESP "$FORMAT_ESP"
+ask_for_efi_format
 
 [[ -b "$EFI_PART" ]] || die "EFI partition is not a block device: $EFI_PART"
 [[ -b "$ROOT_PART" ]] || die "Root partition is not a block device: $ROOT_PART"
@@ -61,9 +99,4 @@ fi
 
 print_install_plan
 
-message="The root partition will be formatted."
-if [[ "$FORMAT_ESP" == "yes" ]]; then
-    message="The root and EFI partitions will be formatted."
-fi
-
-confirm_dialog "$message" "FORMAT"
+confirm_dialog "The root partition(s) will be formatted." "FORMAT"
