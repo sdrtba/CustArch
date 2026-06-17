@@ -9,6 +9,7 @@ PACSTRAP_PACKAGES=(
     btrfs-progs
     dosfstools
     efibootmgr
+    sbctl
     zram-generator
     sudo
     networkmanager

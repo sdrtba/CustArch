@@ -32,8 +32,17 @@ install.sh
 
 ## Текущая схема системы
 
-- UEFI, `systemd-boot`, UKI через `mkinitcpio`.
-- ESP смонтирован в `/boot`, UKI находится в `/boot/EFI/Linux/`.
+- Целевая машина — один ноутбук с одним диском и обязательным dual-boot с Windows.
+- UEFI, Secure Boot, `systemd-boot`, UKI через `mkinitcpio`.
+- Secure Boot обслуживается через `sbctl`: установщик создаёт ключи и подписывает `systemd-boot`/UKI, но не enrol-ит ключи в firmware автоматически. Enrollment делается отдельно в firmware Setup Mode, с сохранением Microsoft keys для Windows.
+- Используется существующая большая Windows ESP как общая ESP для Windows и Arch; она не форматируется.
+- Общая ESP монтируется в `/boot`, UKI находится в `/boot/EFI/Linux/`.
+- Windows-разделы не трогаются: Windows ESP, NTFS-раздел и recovery-раздел должны сохраняться.
+- Целевая схема разделов:
+  - `part 1` — общая Windows + Arch ESP, FAT32, mountpoint `/boot`, не форматировать.
+  - `part 2` — Windows NTFS, не трогать.
+  - `part 3` — Windows recovery, не трогать.
+  - `part 4` — Arch root на Btrfs, форматировать.
 - Корень на Btrfs.
 - Подтома: `@`, `@home`, `@snapshots`, `@var_log`, `@pkg`.
 - Swap-раздел не создаётся; используется `zram-generator`.

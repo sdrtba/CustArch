@@ -29,16 +29,8 @@ mountpoint -q /mnt && die "/mnt is already mounted."
 
 log "Formatting root partition: $ROOT_PART"
 mkfs.btrfs -f "$ROOT_PART"
-
-if [[ "$FORMAT_ESP" == "yes" ]]; then
-    log "Formatting EFI System Partition: $EFI_PART"
-    mkfs.fat -F32 "$EFI_PART"
-else
-    log "Keeping existing EFI System Partition: $EFI_PART"
-fi
+save_state_var ROOT_UUID "$(blkid -s UUID -o value "$ROOT_PART")"
 
 mkdir -p /mnt
 create_subvolumes
 mount_filesystems
-
-save_state_var ROOT_UUID "$(blkid -s UUID -o value "$ROOT_PART")"

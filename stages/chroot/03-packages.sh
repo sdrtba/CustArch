@@ -7,6 +7,8 @@ log "Enabling system services..."
 enable_service bluetooth.service
 enable_service power-profiles-daemon.service
 enable_service ufw.service
+enable_service NetworkManager.service
+enable_service systemd-timesyncd.service
 
 log "Configuring firewall defaults..."
 ufw default deny incoming

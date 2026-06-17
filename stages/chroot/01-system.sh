@@ -21,5 +21,3 @@ cat > /etc/systemd/zram-generator.conf <<'EOF'
 zram-size = ram / 2
 compression-algorithm = zstd
 EOF
-
-systemctl enable NetworkManager
