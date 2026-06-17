@@ -25,9 +25,33 @@ mount_filesystems() {
     mount "$EFI_PART" /mnt/boot
 }
 
+accept_plan() {
+    local confirm
+
+    cat <<EOF
+
+Install plan
+------------
+Target disk:       $DISK
+EFI partition:     $EFI_PART
+Root partition:    $ROOT_PART
+FORMAT ESP:        $FORMAT_ESP
+EOF
+
+    read -rp "Type 'YES' to proceed with this plan: " confirm
+    [[ "$confirm" == "YES" ]] || die "Canceled"
+}
+
+accept_plan
+
 mountpoint -q /mnt && die "/mnt is already mounted."
 
-log "Formatting root partition: $ROOT_PART"
+if [[ $FORMAT_ESP == "yes" ]]; then
+    log "Formatting ESP partition"
+    mkfs.vfat -F 32 "$EFI_PART" || die "Failed to format EFI partition: $EFI_PART"
+fi
+
+log "Formatting ROOT partition: $ROOT_PART"
 mkfs.btrfs -f "$ROOT_PART"
 save_state_var ROOT_UUID "$(blkid -s UUID -o value "$ROOT_PART")"
 

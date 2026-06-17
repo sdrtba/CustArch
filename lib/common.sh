@@ -67,38 +67,3 @@ copy_tree_contents() {
     mkdir -p "$target_dir"
     cp -a "$source_dir"/. "$target_dir"/
 }
-
-choose_from_list() {
-    local prompt="$1"
-    local result_var="$2"
-    shift 2
-
-    local -a items=("$@")
-    local choice i
-
-    ((${#items[@]} > 0)) || die "Nothing to choose from: $prompt"
-
-    echo
-    log "$prompt"
-    for i in "${!items[@]}"; do
-        printf '%d) %s\n' "$((i + 1))" "${items[$i]}"
-    done
-
-    echo
-    read -r -p "Choose number: " choice
-
-    [[ "$choice" =~ ^[0-9]+$ ]] || die "Invalid choice."
-    ((choice >= 1 && choice <= ${#items[@]})) || die "Choice out of range."
-
-    printf -v "$result_var" '%s' "${items[$((choice - 1))]}"
-}
-
-confirm_dialog() {
-    local prompt="$1"
-    local confirm="$2"
-    local check
-    echo
-    log "$prompt"
-    read -r -p "Type $confirm to continue: " check
-    [[ "$check" == "$confirm" ]] || die "Confirmation cancelled."
-}
