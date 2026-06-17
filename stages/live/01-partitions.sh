@@ -34,8 +34,6 @@ choose_partitions() {
     local selected
 
     mapfile -t partitions < <(lsblk -nrpo NAME,TYPE "$DISK" | awk '$2 == "part" { print $1 }')
-    ((${#partitions[@]} >= 4)) ||
-        die "At least four partitions are expected: Windows ESP, Windows NTFS, Windows recovery and Arch ROOT."
 
     lsblk -p -o NAME,SIZE,FSTYPE,LABEL,PARTLABEL,PARTTYPENAME,TYPE,MOUNTPOINTS "$DISK"
 
@@ -75,4 +73,4 @@ run_cfdisk
 choose_partitions
 validate_partitions
 
-confirm_dialog "Type 'YES' to proceed" "YES"
+confirm_dialog "Selected ROOT partition will be formatted" "YES"

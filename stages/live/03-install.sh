@@ -6,9 +6,6 @@ target_state="/mnt$STATE_FILE"
 mountpoint -q /mnt || die "/mnt is not mounted."
 mountpoint -q /mnt/boot || die "/mnt/boot is not mounted."
 
-log "Updating keyring..."
-pacman -Sy --needed --noconfirm archlinux-keyring
-
 log "Installing base system..."
 pacstrap -K /mnt "${PACSTRAP_PACKAGES[@]}"
 
