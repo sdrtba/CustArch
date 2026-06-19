@@ -1,107 +1,112 @@
 #!/usr/bin/env bash
 
-PACSTRAP_PACKAGES=(
+BASE_PACKAGES=(
     base
     base-devel
     linux
     linux-firmware
-    amd-ucode
-    btrfs-progs
-    dosfstools
-    efibootmgr
-    sbctl
-    zram-generator
     sudo
     networkmanager
+    git
     nano
     vim
     curl
     wget
-    git
     openssh
     reflector
     pacman-contrib
-)
-
-PACMAN_COMMON_PACKAGES=(
-    mesa
-    vulkan-radeon
-    libva-mesa-driver
-
-    # wayland
-    # xorg-xwayland
-    # xdg-desktop-portal
-    # qt5-wayland
-    # qt6-wayland
-
-    # kitty
-
-    pipewire
-    wireplumber
-    pipewire-alsa
-    pipewire-pulse
-    pipewire-jack
-    pipewire-audio
-    pavucontrol
-    playerctl
-
-    # dolphin
-    kio-extras
-    ark
-    udisks2
-    udiskie
-    xdg-utils
-    xdg-user-dirs
-
-    bluez
-    bluez-utils
-    blueman
-    network-manager-applet
-    nftables
-
-    power-profiles-daemon
-    brightnessctl
-    acpi
-
-    wl-clipboard
-    cliphist
-
-    # noto-fonts
-    # noto-fonts-cjk
-    # noto-fonts-emoji
-    # ttf-dejavu
-    # ttf-jetbrains-mono-nerd
-
-    grim
-    slurp
-
+    zram-generator
+    efibootmgr
+    sbctl
     jq
     zsh
     fzf
     fastfetch
-    # firefox
     htop
     man-db
     man-pages
     texinfo
     unzip
     ufw
-    rustup
     timeshift
+    rustup
+)
 
-    # hyprland
-    # hyprlock
-    # hypridle
-    # hyprpicker
-    # hyprpolkitagent
-    # xdg-desktop-portal-hyprland
+BTRFS_PACKAGES=(
+    btrfs-progs
+)
 
-    # waybar
-    # swaync
-    # rofi-wayland
-    # swww
+EXT4_PACKAGES=(
+)
+
+AMD_PACKAGES=(
+    amd-ucode
+    mesa
+    vulkan-radeon
+    libva-mesa-driver
+)
+
+NVIDIA_PACKAGES=(
+    nvidia
+    nvidia-utils
+    nvidia-settings
+)
+
+VM_PACKAGES=(
+    mesa
+    qemu-guest-agent
+)
+
+DESKTOP_PACKAGES=(
+    pipewire
+    pipewire-alsa
+    pipewire-audio
+    pipewire-jack
+    pipewire-pulse
+    wireplumber
+    pavucontrol
+    bluez
+    bluez-utils
+    brightnessctl
+    xdg-utils
+    xdg-user-dirs
+    wl-clipboard
+    grim
+    slurp
+    kitty
+    hyprland
+    hyprlock
+    hypridle
+    hyprpicker
+    xdg-desktop-portal-hyprland
+    waybar
+    rofi-wayland
 )
 
 AUR_PACKAGES=(
+    paru
     timeshift-autosnap
 )
+
+aur_packages() {
+    printf '%s\n' "${AUR_PACKAGES[@]}"
+}
+
+target_packages() {
+    printf '%s\n' "${BASE_PACKAGES[@]}"
+
+    case "$FS_TYPE" in
+        btrfs) printf '%s\n' "${BTRFS_PACKAGES[@]}" ;;
+        ext4) printf '%s\n' "${EXT4_PACKAGES[@]}" ;;
+    esac
+
+    case "$GPU" in
+        amd) printf '%s\n' "${AMD_PACKAGES[@]}" ;;
+        nvidia) printf '%s\n' "${NVIDIA_PACKAGES[@]}" ;;
+        vm) printf '%s\n' "${VM_PACKAGES[@]}" ;;
+    esac
+
+    if [[ "$INSTALL_HYPRLAND" == "yes" ]]; then
+        printf '%s\n' "${DESKTOP_PACKAGES[@]}"
+    fi
+}

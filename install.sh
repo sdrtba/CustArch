@@ -1,78 +1,107 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-REPO_URL="https://github.com/sdrtba/CustArch.git"
-TARGET_DIR="/opt/custarch"
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
-log() {
-    printf '[*] %s\n' "$*" >&2
+source "$SCRIPT_DIR/lib/common.sh"
+source "$SCRIPT_DIR/lib/manifest.sh"
+source "$SCRIPT_DIR/lib/packages.sh"
+source "$SCRIPT_DIR/lib/templates.sh"
+source "$SCRIPT_DIR/lib/plan.sh"
+source "$SCRIPT_DIR/lib/runner.sh"
+
+usage() {
+    cat <<EOF
+Usage:
+  ./install.sh              run live installer
+  ./install.sh --chroot     continue inside chroot
+  ./install.sh --post       run post-install tasks after reboot
+  ./install.sh --plan       print desired system plan only
+EOF
 }
 
-die() {
-    printf '[!] %s\n' "$*" >&2
-    exit 1
+confirm_manifest_loop() {
+    local editor answer
+
+    editor="${EDITOR:-nano}"
+
+    while true; do
+        load_manifest
+        validate_manifest
+        print_plan
+
+        printf '\n'
+        printf 'Continue with this plan? [y]es / [e]dit / [q]uit: '
+        read -r answer </dev/tty
+
+        case "$answer" in
+            y|Y|yes|YES)
+                return 0
+                ;;
+            e|E|edit|EDIT)
+                "$editor" "$MANIFEST_FILE" </dev/tty >/dev/tty 2>&1
+                ;;
+            q|Q|quit|QUIT)
+                exit 0
+                ;;
+            *)
+                warn "Unknown answer: $answer"
+                ;;
+        esac
+    done
 }
 
-require_arch_iso() {
-    [[ -f /etc/arch-release ]] || die "This does not look like Arch Linux."
-    [[ -d /run/archiso ]] || die "This script must run from the Arch Linux live ISO."
+run_common() {
+    require_root
+    require_uefi
+    load_manifest
+    validate_manifest
 }
 
-require_network() {
-    ping -c 1 -W 3 github.com >/dev/null 2>&1 ||
-        die "Network check failed. Connect to the network and rerun install.sh."
+run_live() {
+    run_common
+    require_arch_iso
+    confirm_manifest_loop
+    confirm_dangerous_plan
+    run_tasks live
 }
 
-ensure_git() {
-    command -v git >/dev/null 2>&1 && return 0
-    log "Installing git..."
-    pacman -Sy --needed --noconfirm git
+run_chroot() {
+    run_common
+    require_network
+    run_tasks chroot
 }
 
-is_repo_dir() {
-    local repo_dir="$1"
-
-    [[ -f "$repo_dir/start.sh" ]] &&
-        [[ -f "$repo_dir/init.conf" ]] &&
-        [[ -d "$repo_dir/lib" ]] &&
-        [[ -d "$repo_dir/stages" ]]
-}
-
-resolve_repo_dir() {
-    local script_dir
-
-    script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
-
-    if is_repo_dir "$script_dir"; then
-        REPO_DIR="$script_dir"
-        return 0
-    fi
-
-    if [[ -e "$TARGET_DIR" ]]; then
-        is_repo_dir "$TARGET_DIR" ||
-            die "$TARGET_DIR exists but is not a CustArch repository."
-        REPO_DIR=$TARGET_DIR
-        return 0
-    fi
-
-    ensure_git
-
-    log "Cloning repository: $REPO_URL"
-    git clone "$REPO_URL" "$TARGET_DIR"
-    REPO_DIR="$TARGET_DIR"
+run_post() {
+    run_common
+    require_network
+    run_tasks post
 }
 
 main() {
-    require_arch_iso
-    require_network
-
-    REPO_DIR=""
-    resolve_repo_dir
-    [[ -n "$REPO_DIR" ]] || die "Could not resolve repository directory."
-
-    log "Starting LIVE phase from: $REPO_DIR"
-    cd "$REPO_DIR"
-    exec ./start.sh live
+    case "${1:-}" in
+        "")
+            run_live
+            ;;
+        --chroot)
+            run_chroot
+            ;;
+        --post)
+            run_post
+            ;;
+        --plan)
+            load_manifest
+            validate_manifest
+            print_plan
+            ;;
+        -h|--help)
+            usage
+            ;;
+        *)
+            usage >&2
+            die "Unknown argument: $1"
+            ;;
+    esac
 }
 
 main "$@"

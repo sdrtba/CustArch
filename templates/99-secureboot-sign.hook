@@ -1,0 +1,11 @@
+[Trigger]
+Operation = Install
+Operation = Upgrade
+Type = Path
+Target = boot/EFI/Linux/*.efi
+Target = boot/EFI/systemd/systemd-bootx64.efi
+
+[Action]
+Description = Signing EFI binaries for Secure Boot...
+When = PostTransaction
+Exec = /usr/bin/sbctl sign-all
