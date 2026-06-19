@@ -53,7 +53,6 @@ EOF
 
     systemctl enable NetworkManager.service
     systemctl enable bluetooth.service
-    systemctl enable power-profiles-daemon.service
     systemctl enable ufw.service
     systemctl enable systemd-timesyncd.service
     systemctl enable systemd-zram-setup@zram0.service

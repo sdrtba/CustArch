@@ -25,9 +25,6 @@ run_live() {
     [[ "$root_parttype" != *"Windows recovery"* ]] ||
         die "ROOT partition must not be a Windows recovery partition: $ROOT_PART"
 
-    efi_fstype="$(blkid -s TYPE -o value "$EFI_PART" 2>/dev/null || true)"
-    [[ "$efi_fstype" == "vfat" ]] ||
-        die "EFI partition must be FAT32/vfat: $EFI_PART"
-
     findmnt /mnt >/dev/null 2>&1 && die "/mnt is already mounted."
+    return 0
 }
