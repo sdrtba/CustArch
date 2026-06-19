@@ -30,7 +30,6 @@ ensure_git() {
 
     log "Installing git..."
     pacman -Sy --needed --noconfirm git
-    sleep 3
 }
 
 is_repo_dir() {
@@ -48,14 +47,13 @@ resolve_repo_dir() {
     script_dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 
     if is_repo_dir "$script_dir"; then
-        printf '%s\n' "$script_dir"
+        REPO_DIR="$script_dir"
         return 0
     fi
 
     if [[ -e "$TARGET_DIR" ]]; then
         is_repo_dir "$TARGET_DIR" ||
             die "$TARGET_DIR exists but is not a CustArch repository."
-        printf '%s\n' "$TARGET_DIR"
         return 0
     fi
 
@@ -63,18 +61,19 @@ resolve_repo_dir() {
 
     log "Cloning repository: $REPO_URL"
     git clone "$REPO_URL" "$TARGET_DIR"
-    printf '%s\n' "$TARGET_DIR"
+    REPO_DIR="$TARGET_DIR"
 }
 
 main() {
-    local repo_dir
-
     require_arch_iso
     require_network
 
-    repo_dir="$(resolve_repo_dir)"
-    log "Starting LIVE phase from: $repo_dir"
-    cd "$repo_dir"
+    REPO_DIR=""
+    resolve_repo_dir
+    [[ -n "$REPO_DIR" ]] || die "Could not resolve repository directory."
+
+    log "Starting LIVE phase from: $REPO_DIR"
+    cd "$REPO_DIR"
     exec ./start.sh live
 }
 
