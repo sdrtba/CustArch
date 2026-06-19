@@ -6,8 +6,7 @@ log "Checking live environment..."
 [[ -d /run/archiso ]] || die "This script must run from the Arch Linux live ISO."
 [[ -d /sys/firmware/efi/efivars ]] || die "UEFI mode is required."
 
-ping -c 1 -W 3 archlinux.org >/dev/null 2>&1 ||
-    ping -c 1 -W 3 github.com >/dev/null 2>&1 ||
+ping -c 1 -W 3 github.com >/dev/null 2>&1 ||
     die "Network check failed."
 
 log "Live environment is ready."

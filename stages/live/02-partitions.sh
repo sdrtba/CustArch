@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 choose_partitions() {
+    log "Choose paritions for installation"
     lsblk -p -o NAME,SIZE,FSTYPE,LABEL,PARTLABEL,PARTTYPENAME,TYPE,MOUNTPOINTS "$DISK"
 
     read -rp "Type the EFI System Partition: " EFI_PART

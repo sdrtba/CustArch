@@ -1,11 +1,10 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
 
 STATE_FILE="/var/lib/custarch/state.env"
 
 init_state() {
     mkdir -p "$(dirname -- "$STATE_FILE")"
-    cp "$INITIAL_FILE" "$STATE_FILE"
+    cp "$INIT_FILE" "$STATE_FILE"
 }
 
 load_state() {
@@ -31,16 +30,4 @@ save_state_var() {
 
     printf '%s=%q\n' "$key" "$value" >> "$tmp"
     mv "$tmp" "$STATE_FILE"
-    printf -v "$key" '%s' "$value"
-}
-
-copy_state() {
-    local source_file="$1"
-    local target_file="$2"
-    local target_dir
-
-    require_file "$source_file"
-    target_dir="$(dirname -- "$target_file")"
-    mkdir -p "$target_dir"
-    cp -a "$source_file" "$target_file"
 }

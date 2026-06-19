@@ -8,12 +8,13 @@ sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
 sed -i 's/^#ru_RU.UTF-8 UTF-8/ru_RU.UTF-8 UTF-8/' /etc/locale.gen
 locale-gen
 printf 'LANG=en_US.UTF-8\n' > /etc/locale.conf
+printf 'KEYMAP=us\n' > /etc/vconsole.conf
 
-printf '%s\n' "$HOSTNAME" > /etc/hostname
+printf '%s\n' "$SYSTEM_HOSTNAME" > /etc/hostname
 cat > /etc/hosts <<EOF
 127.0.0.1 localhost
 ::1       localhost
-127.0.1.1 $HOSTNAME.localdomain $HOSTNAME
+127.0.1.1 $SYSTEM_HOSTNAME.localdomain $SYSTEM_HOSTNAME
 EOF
 
 cat > /etc/systemd/zram-generator.conf <<'EOF'

@@ -24,10 +24,7 @@ require_network() {
 }
 
 ensure_git() {
-    if command -v git >/dev/null 2>&1; then
-        return 0
-    fi
-
+    command -v git >/dev/null 2>&1 && return 0
     log "Installing git..."
     pacman -Sy --needed --noconfirm git
 }
@@ -36,7 +33,7 @@ is_repo_dir() {
     local repo_dir="$1"
 
     [[ -f "$repo_dir/start.sh" ]] &&
-        [[ -f "$repo_dir/initial.conf" ]] &&
+        [[ -f "$repo_dir/init.conf" ]] &&
         [[ -d "$repo_dir/lib" ]] &&
         [[ -d "$repo_dir/stages" ]]
 }
@@ -54,6 +51,7 @@ resolve_repo_dir() {
     if [[ -e "$TARGET_DIR" ]]; then
         is_repo_dir "$TARGET_DIR" ||
             die "$TARGET_DIR exists but is not a CustArch repository."
+        REPO_DIR=$TARGET_DIR
         return 0
     fi
 

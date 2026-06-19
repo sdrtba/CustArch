@@ -15,20 +15,26 @@ ansi_art='                           ▄▄▄
 prepare() {
     ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
     LIB_DIR="$ROOT_DIR/lib"
-    INITIAL_FILE="$ROOT_DIR/initial.conf"
+    INIT_FILE="$ROOT_DIR/init.conf"
     LOG_FILE="$ROOT_DIR/install.log"
-    export ROOT_DIR LIB_DIR INITIAL_FILE LOG_FILE
+    export ROOT_DIR LIB_DIR INIT_FILE LOG_FILE
 
     source "$LIB_DIR/common.sh"
     source "$LIB_DIR/state.sh"
     source "$LIB_DIR/packages.sh"
 
-    require_root
-    if [[ "$PHASE" == "live" ]]; then
-        init_state
-        [[ -t 1 ]] && clear
-        printf '\n%s\n' "$ansi_art"
-    fi
+    case "$PHASE" in
+        live)
+            require_root
+            init_state
+            clear
+            printf '\n%s\n' "$ansi_art"
+            ;;
+        chroot|firstboot)
+            require_root
+            ;;
+    esac
+
     load_state
 
     if [[ -r /dev/tty ]]; then
@@ -56,23 +62,6 @@ run_stages() {
     done
 }
 
-finish() {
-    log "$PHASE phase finished."
-
-    [[ "$PHASE" == "live" ]] || return 0
-
-    if mountpoint -q /mnt; then
-        umount -R /mnt
-    else
-        warn "/mnt is not mounted, skipping unmount."
-    fi
-
-    read -rp "Reboot now? [y/N]: " REBOOT_CONFIRM
-    if [[ "$REBOOT_CONFIRM" =~ ^[Yy]$ ]]; then
-        reboot
-    fi
-}
-
 main() {
     PHASE="${1:-}"
     export PHASE
@@ -88,7 +77,6 @@ main() {
 
     prepare
     run_stages
-    finish
 }
 
 main "$@"

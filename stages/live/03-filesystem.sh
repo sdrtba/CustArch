@@ -12,7 +12,7 @@ Install plan
 Target disk:       $DISK
 EFI partition:     $EFI_PART
 Root partition:    $ROOT_PART
-FORMAT ESP:        $FORMAT_ESP
+Format ESP:        $FORMAT_ESP
 EOF
 
     read -rp "Type 'YES' to proceed with this plan: " confirm
@@ -48,7 +48,7 @@ accept_plan
 
 if [[ $FORMAT_ESP == "yes" ]]; then
     log "Formatting ESP partition"
-    mkfs.vfat -F 32 "$EFI_PART" || die "Failed to format EFI partition: $EFI_PART"
+    mkfs.fat -F 32 "$EFI_PART" || die "Failed to format EFI partition: $EFI_PART"
 fi
 
 log "Formatting ROOT partition: $ROOT_PART"

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -Eeuo pipefail
 
 log() {
     printf '[*] %s\n' "$*" >&2
@@ -10,12 +9,14 @@ warn() {
 }
 
 die() {
-    printf '[!] %s\n' "$*" >&2
+    printf '[!!!] %s\n' "$*" >&2
     exit 1
 }
 
 tui() {
-    "$@" </dev/tty >/dev/tty 2>/dev/tty
+    [[ -r /dev/tty && -w /dev/tty ]] ||
+        die "No interactive terminal available."
+    "$@" </dev/tty >/dev/tty 2>&1
 }
 
 require_root() {
@@ -41,11 +42,6 @@ pacman_install() {
     pacman -S --needed --noconfirm "${packages[@]}"
 }
 
-enable_service() {
-    local service="$1"
-    systemctl enable "$service"
-}
-
 start_service() {
     local service="$1"
     if [[ -d /run/systemd/system ]]; then
@@ -53,17 +49,4 @@ start_service() {
     else
         warn "systemd is not running, skipping service start: $service"
     fi
-}
-
-copy_tree_contents() {
-    local source_dir="$1"
-    local target_dir="$2"
-
-    [[ -d "$source_dir" ]] || {
-        warn "Source directory does not exist, skipping copy: $source_dir"
-        return 0
-    }
-
-    mkdir -p "$target_dir"
-    cp -a "$source_dir"/. "$target_dir"/
 }

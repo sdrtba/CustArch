@@ -11,10 +11,7 @@ configure_pacman_conf() {
         -e 's/^#Color$/Color/' \
         -e 's/^#\?ParallelDownloads = .*/ParallelDownloads = 10/' \
         "$conf"
-
-    if ! grep -q '^ILoveCandy$' "$conf"; then
-        sed -i '/^Color$/a ILoveCandy' "$conf"
-    fi
+    sed -i '/^Color$/a ILoveCandy' "$conf"
 
     if grep -q '^\[multilib\]' "$conf"; then
         return 0
@@ -29,27 +26,6 @@ configure_pacman_conf() {
 [multilib]
 Include = /etc/pacman.d/mirrorlist
 EOF
-}
-
-refresh_mirrorlist() {
-    log "Refreshing pacman mirrorlist with reflector..."
-    reflector \
-        --protocol https \
-        --latest 20 \
-        --sort rate \
-        --save /etc/pacman.d/mirrorlist
-}
-
-configure_reflector_timer() {
-    mkdir -p /etc/xdg/reflector
-    cat > /etc/xdg/reflector/reflector.conf <<'EOF'
---save /etc/pacman.d/mirrorlist
---protocol https
---latest 20
---sort rate
-EOF
-
-    systemctl enable reflector.timer
 }
 
 configure_paccache_hook() {
@@ -68,10 +44,31 @@ Exec = /usr/bin/paccache -rk2
 EOF
 }
 
+refresh_mirrorlist() {
+    log "Refreshing pacman mirrorlist with reflector..."
+    reflector \
+        --protocol https \
+        --latest 20 \
+        --sort rate \
+        --save "/etc/pacman.d/mirrorlist"
+}
+
+configure_reflector_timer() {
+    mkdir -p /etc/xdg/reflector
+    cat > /etc/xdg/reflector/reflector.conf <<'EOF'
+--save /etc/pacman.d/mirrorlist
+--protocol https
+--latest 20
+--sort rate
+EOF
+
+    systemctl enable reflector.timer
+}
+
 log "Configuring pacman..."
 configure_pacman_conf
-configure_reflector_timer
 configure_paccache_hook
+configure_reflector_timer
 refresh_mirrorlist
 
 log "Refreshing package databases..."
