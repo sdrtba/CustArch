@@ -13,11 +13,6 @@ ansi_art='                           ▄▄▄
                                                             ███   █▀                         '
 
 prepare() {
-    if [[ -t 1 ]]; then
-        clear
-    fi
-    printf '\n%s\n' "$ansi_art"
-
     ROOT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
     LIB_DIR="$ROOT_DIR/lib"
     INITIAL_FILE="$ROOT_DIR/initial.conf"
@@ -31,6 +26,8 @@ prepare() {
     require_root
     if [[ "$PHASE" == "live" ]]; then
         init_state
+        [[ -t 1 ]] && clear
+        printf '\n%s\n' "$ansi_art"
     fi
     load_state
 

@@ -26,7 +26,6 @@ configure_pacman_conf() {
     fi
 
     cat >> "$conf" <<'EOF'
-
 [multilib]
 Include = /etc/pacman.d/mirrorlist
 EOF

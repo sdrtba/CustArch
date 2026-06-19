@@ -2,6 +2,23 @@
 
 MOUNT_OPTIONS="noatime,compress=zstd"
 
+accept_plan() {
+    local confirm
+
+    cat <<EOF
+
+Install plan
+------------
+Target disk:       $DISK
+EFI partition:     $EFI_PART
+Root partition:    $ROOT_PART
+FORMAT ESP:        $FORMAT_ESP
+EOF
+
+    read -rp "Type 'YES' to proceed with this plan: " confirm
+    [[ "$confirm" == "YES" ]] || die "Canceled"
+}
+
 create_subvolumes() {
     mount "$ROOT_PART" /mnt
 
@@ -25,26 +42,9 @@ mount_filesystems() {
     mount "$EFI_PART" /mnt/boot
 }
 
-accept_plan() {
-    local confirm
-
-    cat <<EOF
-
-Install plan
-------------
-Target disk:       $DISK
-EFI partition:     $EFI_PART
-Root partition:    $ROOT_PART
-FORMAT ESP:        $FORMAT_ESP
-EOF
-
-    read -rp "Type 'YES' to proceed with this plan: " confirm
-    [[ "$confirm" == "YES" ]] || die "Canceled"
-}
+mountpoint -q /mnt && die "/mnt is already mounted."
 
 accept_plan
-
-mountpoint -q /mnt && die "/mnt is already mounted."
 
 if [[ $FORMAT_ESP == "yes" ]]; then
     log "Formatting ESP partition"

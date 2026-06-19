@@ -34,7 +34,7 @@ install_aur_packages() {
 
     if ((${#failed_packages[@]} > 0)); then
         warn "Some AUR packages were not installed: ${failed_packages[*]}"
-        warn "Continuing installation; install them manually after first boot."
+        warn "Continuing firstboot; install them manually after setup completes."
     fi
 }
 

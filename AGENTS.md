@@ -9,6 +9,8 @@ install.sh
   -> start.sh live
   -> arch-chroot /mnt /opt/custarch/start.sh chroot
   -> reboot
+  -> systemd starts custarch-firstboot.service
+  -> /opt/custarch/start.sh firstboot
 ```
 
 `start.sh` принимает фазу, загружает общие файлы из `lib/` и по имени запускает через `source` все `.sh`-стадии из соответствующего каталога `stages/`.
@@ -30,11 +32,13 @@ install.sh
 
 Не используй переменные окружения как единственный способ передать данные между фазами: отдельные фазы запускаются в разных процессах и системах.
 
+Фаза `firstboot` запускается одноразовым systemd-сервисом после первой загрузки установленной системы. В ней выполняются действия, которым нужна уже загруженная система: проверка сети для AUR, установка AUR-пакетов, пользовательские конфиги, desktop-настройки, пересборка и проверка UKI/Secure Boot, первый snapshot.
+
 ## Текущая схема системы
 
 - Целевая машина — один ноутбук с одним диском и обязательным dual-boot с Windows.
 - UEFI, Secure Boot, `systemd-boot`, UKI через `mkinitcpio`.
-- Secure Boot обслуживается через `sbctl`: установщик создаёт ключи и подписывает `systemd-boot`/UKI, но не enrol-ит ключи в firmware автоматически. Enrollment делается отдельно в firmware Setup Mode, с сохранением Microsoft keys для Windows.
+- Secure Boot обслуживается через `sbctl`: установщик создаёт ключи и подписывает `systemd-boot`/UKI, но не enrol-ит ключи в firmware без явного подтверждения. Enrollment делается отдельно в firmware Setup Mode, с сохранением Microsoft keys для Windows; firstboot может предложить `sbctl enroll-keys --microsoft`, если Setup Mode уже включён.
 - Используется существующая большая Windows ESP как общая ESP для Windows и Arch; она не форматируется.
 - Общая ESP монтируется в `/boot`, UKI находится в `/boot/EFI/Linux/`.
 - Windows-разделы не трогаются: Windows ESP, NTFS-раздел и recovery-раздел должны сохраняться.
