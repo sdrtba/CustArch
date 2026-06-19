@@ -2,7 +2,7 @@
 set -Eeuo pipefail
 
 REPO_URL="https://github.com/sdrtba/CustArch.git"
-TARGET_DIR="/root/custarch"
+TARGET_DIR="/opt/custarch"
 
 log() {
     printf '[*] %s\n' "$*" >&2

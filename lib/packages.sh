@@ -104,5 +104,4 @@ PACMAN_COMMON_PACKAGES=(
 
 AUR_PACKAGES=(
     timeshift-autosnap
-    spotify
 )

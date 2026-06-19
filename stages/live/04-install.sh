@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-target_repo="/mnt/opt/custarch"
+target_repo="/mnt$TARGET_DIR"
 target_state="/mnt$STATE_FILE"
 
 mountpoint -q /mnt || die "/mnt is not mounted."
