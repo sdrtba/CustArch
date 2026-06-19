@@ -34,14 +34,13 @@ validate_partitions() {
 
 check_esp() {
     local efi_fstype confirm
+    FORMAT_ESP="no"
 
     efi_fstype="$(blkid -s TYPE -o value "$EFI_PART" 2>/dev/null || true)"
     [[ "$efi_fstype" == "vfat" ]] && return 0
 
     warn "$EFI_PART is not vfat/FAT32"
-    read -rp "Format it as FAT32? Type 'YES' to continue: " confirm
-    [[ "$confirm" == "YES" ]] || die "EFI partition is not vfat/FAT32: $EFI_PART"
-
+    warn "$EFI_PART will be formated as FAT32!!!"
     FORMAT_ESP="yes"
 }
 

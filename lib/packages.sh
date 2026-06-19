@@ -28,13 +28,13 @@ PACMAN_COMMON_PACKAGES=(
     vulkan-radeon
     libva-mesa-driver
 
-    wayland
-    xorg-xwayland
-    xdg-desktop-portal
-    qt5-wayland
-    qt6-wayland
+    # wayland
+    # xorg-xwayland
+    # xdg-desktop-portal
+    # qt5-wayland
+    # qt6-wayland
 
-    kitty
+    # kitty
 
     pipewire
     wireplumber
@@ -45,7 +45,7 @@ PACMAN_COMMON_PACKAGES=(
     pavucontrol
     playerctl
 
-    dolphin
+    # dolphin
     kio-extras
     ark
     udisks2
@@ -66,11 +66,11 @@ PACMAN_COMMON_PACKAGES=(
     wl-clipboard
     cliphist
 
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    ttf-dejavu
-    ttf-jetbrains-mono-nerd
+    # noto-fonts
+    # noto-fonts-cjk
+    # noto-fonts-emoji
+    # ttf-dejavu
+    # ttf-jetbrains-mono-nerd
 
     grim
     slurp
@@ -79,7 +79,7 @@ PACMAN_COMMON_PACKAGES=(
     zsh
     fzf
     fastfetch
-    firefox
+    # firefox
     htop
     man-db
     man-pages
@@ -89,19 +89,20 @@ PACMAN_COMMON_PACKAGES=(
     rustup
     timeshift
 
-    hyprland
-    hyprlock
-    hypridle
-    hyprpicker
-    hyprpolkitagent
-    xdg-desktop-portal-hyprland
+    # hyprland
+    # hyprlock
+    # hypridle
+    # hyprpicker
+    # hyprpolkitagent
+    # xdg-desktop-portal-hyprland
 
-    waybar
-    swaync
-    rofi-wayland
-    swww
+    # waybar
+    # swaync
+    # rofi-wayland
+    # swww
 )
 
 AUR_PACKAGES=(
     timeshift-autosnap
+    spotify
 )
