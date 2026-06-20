@@ -1,73 +1,85 @@
 #!/usr/bin/env bash
 
-BASE_PACKAGES=(
+CORE_PACKAGES=(
     base
-    base-devel
     linux
     linux-firmware
 )
 
-ADMIN_PACKAGES=(
-    sudo
-    networkmanager
-    openssh
-    ufw
-    reflector
-    pacman-contrib
+BUILD_PACKAGES=(
+    base-devel
+    rustup
+)
+
+BOOT_PACKAGES=(
     efibootmgr
     sbctl
 )
 
+ADMIN_PACKAGES=(
+    sudo
+    pacman-contrib
+    reflector
+    networkmanager
+    openssh
+    ufw
+)
+
 CLI_PACKAGES=(
-    git
     nano
     vim
+    zsh
+    fzf
+    git
     curl
     wget
     rsync
     jq
-    zsh
-    fzf
     fastfetch
     htop
+    btop
+    p7zip
+    zip
+    unzip
     man-db
     man-pages
     texinfo
-    unzip
+    tealdeer
 )
 
-SYSTEM_PACKAGES=(
+STORAGE_PACKAGES=(
     zram-generator
+    exfatprogs
 )
 
 BACKUP_PACKAGES=(
     timeshift
-    rustup
+    # snapper
 )
 
 BTRFS_PACKAGES=(
     btrfs-progs
-)
-
-EXT4_PACKAGES=(
+    # btrfs-assistant
+    compsize
 )
 
 AMD_PACKAGES=(
     amd-ucode
     mesa
     vulkan-radeon
-    libva-mesa-driver
-)
-
-NVIDIA_PACKAGES=(
-    nvidia
-    nvidia-utils
-    nvidia-settings
 )
 
 VM_PACKAGES=(
+    foot
     mesa
     qemu-guest-agent
+    virtualbox-guest-utils
+    open-vm-tools
+)
+
+DESKTOP_BASE_PACKAGES=(
+    xdg-utils
+    xdg-user-dirs
 )
 
 DESKTOP_AUDIO_PACKAGES=(
@@ -86,11 +98,10 @@ DESKTOP_HARDWARE_PACKAGES=(
     blueman
     brightnessctl
     network-manager-applet
+    power-profiles-daemon
 )
 
 DESKTOP_PORTAL_PACKAGES=(
-    xdg-utils
-    xdg-user-dirs
     xdg-desktop-portal
     xdg-desktop-portal-gtk
     xdg-desktop-portal-hyprland
@@ -110,12 +121,16 @@ DESKTOP_WAYLAND_PACKAGES=(
 
 DESKTOP_APPS_PACKAGES=(
     firefox
+    kitty
+    file-roller
     thunar
     thunar-archive-plugin
     tumbler
+    ffmpegthumbnailer
     gvfs
-    file-roller
-    kitty
+    gvfs-smb
+    gvfs-mtp
+    udiskie
 )
 
 DESKTOP_STYLE_PACKAGES=(
@@ -135,15 +150,15 @@ HYPRLAND_PACKAGES=(
     hyprland
     hyprlock
     hypridle
+    hyprshot
     hyprpicker
     waybar
-    rofi-wayland
+    rofi
     mako
-    polkit-gnome
+    hyprpolkitagent
 )
 
 AUR_PACKAGES=(
-    paru
     timeshift-autosnap
 )
 
@@ -152,30 +167,29 @@ aur_packages() {
 }
 
 target_packages() {
-    printf '%s\n' "${BASE_PACKAGES[@]}"
+    printf '%s\n' "${CORE_PACKAGES[@]}"
+    printf '%s\n' "${BUILD_PACKAGES[@]}"
+    printf '%s\n' "${BOOT_PACKAGES[@]}"
     printf '%s\n' "${ADMIN_PACKAGES[@]}"
     printf '%s\n' "${CLI_PACKAGES[@]}"
-    printf '%s\n' "${SYSTEM_PACKAGES[@]}"
+    printf '%s\n' "${STORAGE_PACKAGES[@]}"
     printf '%s\n' "${BACKUP_PACKAGES[@]}"
 
     case "$FS_TYPE" in
         btrfs) printf '%s\n' "${BTRFS_PACKAGES[@]}" ;;
-        ext4) printf '%s\n' "${EXT4_PACKAGES[@]}" ;;
     esac
 
     case "$GPU" in
         amd) printf '%s\n' "${AMD_PACKAGES[@]}" ;;
-        nvidia) printf '%s\n' "${NVIDIA_PACKAGES[@]}" ;;
         vm) printf '%s\n' "${VM_PACKAGES[@]}" ;;
     esac
 
-    if [[ "$INSTALL_HYPRLAND" == "yes" ]]; then
-        printf '%s\n' "${DESKTOP_AUDIO_PACKAGES[@]}"
-        printf '%s\n' "${DESKTOP_HARDWARE_PACKAGES[@]}"
-        printf '%s\n' "${DESKTOP_PORTAL_PACKAGES[@]}"
-        printf '%s\n' "${DESKTOP_WAYLAND_PACKAGES[@]}"
-        printf '%s\n' "${DESKTOP_APPS_PACKAGES[@]}"
-        printf '%s\n' "${DESKTOP_STYLE_PACKAGES[@]}"
-        printf '%s\n' "${HYPRLAND_PACKAGES[@]}"
-    fi
+    printf '%s\n' "${DESKTOP_BASE_PACKAGES[@]}"
+    printf '%s\n' "${DESKTOP_AUDIO_PACKAGES[@]}"
+    printf '%s\n' "${DESKTOP_HARDWARE_PACKAGES[@]}"
+    printf '%s\n' "${DESKTOP_PORTAL_PACKAGES[@]}"
+    printf '%s\n' "${DESKTOP_WAYLAND_PACKAGES[@]}"
+    printf '%s\n' "${DESKTOP_APPS_PACKAGES[@]}"
+    printf '%s\n' "${DESKTOP_STYLE_PACKAGES[@]}"
+    printf '%s\n' "${HYPRLAND_PACKAGES[@]}"
 }

@@ -2,9 +2,6 @@
 
 run_chroot() {
     printf '%s\n' "$HOSTNAME" > /etc/hostname
-    cat > /etc/hosts <<EOF
-127.0.0.1 localhost
-::1       localhost
-127.0.1.1 $HOSTNAME.localdomain $HOSTNAME
-EOF
+    install_template hosts /etc/hosts
+    printf '127.0.0.1 %s.localdomain %s\n' "$HOSTNAME" "$HOSTNAME" >> /etc/hosts
 }

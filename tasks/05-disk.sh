@@ -2,6 +2,7 @@
 
 run_live() {
     local mounted_target="no"
+    local mount_options="noatime,compress=zstd"
 
     # shellcheck disable=SC2329
     disk_cleanup_mounts_on_error() {
@@ -31,13 +32,13 @@ run_live() {
             umount /mnt
             mounted_target="no"
 
-            mount -o "$MOUNT_OPTIONS,subvol=@" "$ROOT_PART" /mnt
+            mount -o "$mount_options,subvol=@" "$ROOT_PART" /mnt
             mounted_target="yes"
             mkdir -p /mnt/{boot,home,.snapshots,var/log,var/cache/pacman/pkg}
-            mount -o "$MOUNT_OPTIONS,subvol=@home" "$ROOT_PART" /mnt/home
-            mount -o "$MOUNT_OPTIONS,subvol=@snapshots" "$ROOT_PART" /mnt/.snapshots
-            mount -o "$MOUNT_OPTIONS,subvol=@var_log" "$ROOT_PART" /mnt/var/log
-            mount -o "$MOUNT_OPTIONS,subvol=@pkg" "$ROOT_PART" /mnt/var/cache/pacman/pkg
+            mount -o "$mount_options,subvol=@home" "$ROOT_PART" /mnt/home
+            mount -o "$mount_options,subvol=@snapshots" "$ROOT_PART" /mnt/.snapshots
+            mount -o "$mount_options,subvol=@var_log" "$ROOT_PART" /mnt/var/log
+            mount -o "$mount_options,subvol=@pkg" "$ROOT_PART" /mnt/var/cache/pacman/pkg
             ;;
         ext4)
             mkfs.ext4 -F "$ROOT_PART"

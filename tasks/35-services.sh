@@ -2,8 +2,8 @@
 
 run_chroot() {
     install_template zram-generator.conf /etc/systemd/zram-generator.conf
-    install_template paccache.hook /etc/pacman.d/hooks/paccache.hook
     install_template reflector.conf /etc/xdg/reflector/reflector.conf
+    install_template paccache.hook /etc/pacman.d/hooks/paccache.hook
 
     systemctl enable NetworkManager.service
     systemctl enable bluetooth.service

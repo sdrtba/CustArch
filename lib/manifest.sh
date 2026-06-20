@@ -4,7 +4,6 @@ MANIFEST_FILE="${MANIFEST_FILE:-$SCRIPT_DIR/manifest.conf}"
 
 load_manifest() {
     [[ -r "$MANIFEST_FILE" ]] || die "Manifest is not readable: $MANIFEST_FILE"
-    # shellcheck source=/dev/null
     source "$MANIFEST_FILE"
 }
 
@@ -22,11 +21,8 @@ validate_manifest() {
     : "${ROOT_PART:?ROOT_PART is required}"
     : "${FS_TYPE:?FS_TYPE is required}"
     : "${FORMAT_ESP:?FORMAT_ESP is required}"
-    : "${INSTALL_HYPRLAND:?INSTALL_HYPRLAND is required}"
     : "${GPU:?GPU is required}"
     : "${INSTALL_PARU:?INSTALL_PARU is required}"
-    : "${INSTALL_HOMEFILES:?INSTALL_HOMEFILES is required}"
-    : "${MOUNT_OPTIONS:?MOUNT_OPTIONS is required}"
     : "${HOSTNAME:?HOSTNAME is required}"
     : "${TIMEZONE:?TIMEZONE is required}"
     : "${USERNAME:?USERNAME is required}"
@@ -34,13 +30,11 @@ validate_manifest() {
 
     [[ "$FS_TYPE" == "btrfs" || "$FS_TYPE" == "ext4" ]] ||
         die "FS_TYPE must be btrfs or ext4, got: $FS_TYPE"
-    [[ "$GPU" == "amd" || "$GPU" == "nvidia" || "$GPU" == "vm" ]] ||
-        die "GPU must be amd, nvidia or vm, got: $GPU"
+    [[ "$GPU" == "amd" || "$GPU" == "vm" ]] ||
+        die "GPU must be amd or vm, got: $GPU"
 
     validate_yes_no FORMAT_ESP "$FORMAT_ESP"
-    validate_yes_no INSTALL_HYPRLAND "$INSTALL_HYPRLAND"
     validate_yes_no INSTALL_PARU "$INSTALL_PARU"
-    validate_yes_no INSTALL_HOMEFILES "$INSTALL_HOMEFILES"
 
     [[ "$EFI_PART" != "$ROOT_PART" ]] || die "EFI_PART and ROOT_PART must be different."
     [[ "$USERNAME" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]] || die "Invalid USERNAME: $USERNAME"

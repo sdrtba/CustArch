@@ -16,11 +16,8 @@ Edit `manifest.conf` before running the installer:
 - `DISK`, `EFI_PART`, `ROOT_PART`: target block devices.
 - `FS_TYPE`: `btrfs` or `ext4`.
 - `FORMAT_ESP`: `yes` to format the EFI partition, `no` to keep it.
-- `MOUNT_OPTIONS`: mount options used for btrfs subvolumes.
-- `GPU`: `amd`, `nvidia`, or `vm`.
-- `INSTALL_HYPRLAND`: install the desktop package set when `yes`.
+- `GPU`: `amd` or `vm`.
 - `INSTALL_PARU`: build `paru` and install AUR packages during post-install when `yes`.
-- `INSTALL_HOMEFILES`: copy managed files from `home/` into the target user home when `yes`.
 - `HOSTNAME`, `TIMEZONE`, `USERNAME`, `TARGET_DIR`: target system identity and installer path.
 
 ## Workflow
@@ -77,13 +74,16 @@ Tasks are loaded from `tasks/*.sh` in lexical order. Each task may expose `run_l
 
 Package groups live in `lib/packages.sh`:
 
-- `BASE_PACKAGES`: Arch base, kernel, firmware.
-- `ADMIN_PACKAGES`: sudo, networking, SSH, firewall, mirrors, boot/Secure Boot tools.
-- `CLI_PACKAGES`: shell, editor, fetch/tools, manuals, archive utilities.
-- `SYSTEM_PACKAGES`: system services such as zram.
-- `BACKUP_PACKAGES`: backup and build prerequisites used by post-install tasks.
-- `BTRFS_PACKAGES`, `EXT4_PACKAGES`: filesystem-specific packages.
-- `AMD_PACKAGES`, `NVIDIA_PACKAGES`, `VM_PACKAGES`: GPU/profile-specific packages.
+- `CORE_PACKAGES`: Arch base, kernel, firmware.
+- `BUILD_PACKAGES`: build prerequisites used by post-install tasks.
+- `BOOT_PACKAGES`: bootloader and Secure Boot tools.
+- `ADMIN_PACKAGES`: sudo, pacman maintenance, mirrors, networking, SSH, firewall.
+- `CLI_*_PACKAGES`: editor, shell, network/data, monitoring, archive, and manual tools.
+- `STORAGE_PACKAGES`: storage/system helpers such as zram and exFAT tools.
+- `BACKUP_PACKAGES`: backup tools.
+- `BTRFS_PACKAGES`: filesystem-specific packages.
+- `AMD_PACKAGES`, `VM_PACKAGES`: GPU/profile-specific packages.
+- `DESKTOP_BASE_PACKAGES`: desktop integration basics such as XDG tools.
 - `DESKTOP_AUDIO_PACKAGES`: PipeWire stack and audio controls.
 - `DESKTOP_HARDWARE_PACKAGES`: Bluetooth, brightness, network tray tools.
 - `DESKTOP_PORTAL_PACKAGES`: XDG utilities and portals.
@@ -95,7 +95,7 @@ Package groups live in `lib/packages.sh`:
 
 ## Home Files
 
-Managed user files live under `home/` and are copied to `/home/$USERNAME` during the chroot stage when `INSTALL_HOMEFILES=yes`.
+Managed user files live under `home/` and are copied to `/home/$USERNAME` during the chroot stage.
 
 Use this for files that should be part of a fresh installed profile:
 
