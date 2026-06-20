@@ -1,15 +1,6 @@
 #!/usr/bin/env bash
 
-run_chroot() {
-    cat <<EOF
-
-Chroot work is done.
-After reboot, run:
-  sudo $TARGET_DIR/install.sh --post
-EOF
-}
-
-install_paru() {
+aur_install_paru() {
     local build_dir
 
     if command -v paru >/dev/null 2>&1; then
@@ -40,7 +31,7 @@ install_paru() {
     rm -rf -- "$build_dir"
 }
 
-install_aur_packages() {
+aur_install_packages() {
     local package
     local -a failed_packages=()
 
@@ -49,8 +40,9 @@ install_aur_packages() {
         [[ "$package" != "paru" ]] || continue
 
         log "Installing AUR package: $package"
+        # shellcheck disable=SC2016
         if ! runuser -u "$USERNAME" -- bash -lc \
-            "paru -S --needed --noconfirm --skipreview --removemake '$package'"; then
+            'paru -S --needed --noconfirm --skipreview --removemake "$1"' _ "$package"; then
             warn "AUR package installation failed: $package"
             failed_packages+=("$package")
         fi
@@ -61,7 +53,7 @@ install_aur_packages() {
     fi
 }
 
-run_aur_setup() {
+aur_run_setup() {
     local sudoers_file="/etc/sudoers.d/custarch-aur"
 
     id "$USERNAME" >/dev/null 2>&1 || die "User does not exist: $USERNAME"
@@ -70,8 +62,8 @@ run_aur_setup() {
     chmod 0440 "$sudoers_file"
     trap 'rm -f /etc/sudoers.d/custarch-aur' RETURN
 
-    if install_paru; then
-        install_aur_packages
+    if aur_install_paru; then
+        aur_install_packages
     else
         warn "paru installation failed. Skipping AUR packages."
     fi
@@ -81,20 +73,7 @@ run_aur_setup() {
 }
 
 run_post() {
-    log "Enabling user linger for $USERNAME..."
-    loginctl enable-linger "$USERNAME"
-
     if [[ "$INSTALL_PARU" == "yes" ]]; then
-        run_aur_setup
+        aur_run_setup
     fi
-
-    if [[ "$INSTALL_HYPRLAND" == "yes" ]]; then
-        xdg-user-dirs-update || true
-    fi
-
-    if command -v timeshift >/dev/null 2>&1; then
-        timeshift --create --comments "CustArch initial snapshot" || true
-    fi
-
-    log "Post-install tasks finished."
 }

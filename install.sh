@@ -6,7 +6,6 @@ SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
 source "$SCRIPT_DIR/lib/common.sh"
 source "$SCRIPT_DIR/lib/manifest.sh"
 source "$SCRIPT_DIR/lib/packages.sh"
-source "$SCRIPT_DIR/lib/templates.sh"
 source "$SCRIPT_DIR/lib/plan.sh"
 source "$SCRIPT_DIR/lib/runner.sh"
 
@@ -51,30 +50,32 @@ confirm_manifest_loop() {
     done
 }
 
-run_common() {
-    require_root
-    require_uefi
-    load_manifest
-    validate_manifest
-}
-
 run_live() {
-    run_common
+    require_root
+    start_logging live
+    require_uefi
     require_arch_iso
+    require_network
     confirm_manifest_loop
     confirm_dangerous_plan
     run_tasks live
 }
 
 run_chroot() {
-    run_common
+    require_root
+    start_logging chroot
     require_network
+    load_manifest
+    validate_manifest
     run_tasks chroot
 }
 
 run_post() {
-    run_common
+    require_root
+    start_logging post
     require_network
+    load_manifest
+    validate_manifest
     run_tasks post
 }
 

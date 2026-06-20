@@ -7,11 +7,13 @@ run_tasks() {
     for task in "$SCRIPT_DIR"/tasks/*.sh; do
         [[ -e "$task" ]] || continue
         unset -f run_live run_chroot run_post
+        # shellcheck source=/dev/null
         source "$task"
 
         if declare -F "run_${mode}" >/dev/null 2>&1; then
             log "Running $(basename "$task") [$mode]"
             "run_${mode}"
+            log "Finished $(basename "$task") [$mode]"
         fi
     done
 

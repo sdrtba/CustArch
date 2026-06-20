@@ -19,6 +19,7 @@ Username:          $USERNAME
 GPU profile:       $GPU
 Install Hyprland:  $INSTALL_HYPRLAND
 Install paru:      $INSTALL_PARU
+Install homefiles: $INSTALL_HOMEFILES
 
 Generated files:
   /etc/systemd/zram-generator.conf

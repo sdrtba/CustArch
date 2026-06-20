@@ -1,15 +1,36 @@
 #!/usr/bin/env bash
 
+LOG_STARTED="${LOG_STARTED:-no}"
+LOG_FILE="${LOG_FILE:-}"
+
+start_logging() {
+    local mode="$1"
+    local log_dir timestamp
+
+    [[ "$LOG_STARTED" == "no" ]] || return 0
+
+    log_dir="${LOG_DIR:-/var/log/custarch}"
+    timestamp="$(date -u +%Y%m%dT%H%M%SZ)"
+    LOG_FILE="${LOG_FILE:-$log_dir/$mode-$timestamp.log}"
+
+    mkdir -p "$(dirname -- "$LOG_FILE")"
+    exec > >(tee -a "$LOG_FILE") 2>&1
+
+    LOG_STARTED="yes"
+    export LOG_STARTED LOG_FILE
+    log "Logging to $LOG_FILE"
+}
+
 log() {
-    printf '[*] %s\n' "$*" >&2
+    printf '[%(%Y-%m-%dT%H:%M:%SZ)T] [*] %s\n' -1 "$*" >&2
 }
 
 warn() {
-    printf '[!] %s\n' "$*" >&2
+    printf '[%(%Y-%m-%dT%H:%M:%SZ)T] [!] %s\n' -1 "$*" >&2
 }
 
 die() {
-    printf '[!!!] %s\n' "$*" >&2
+    printf '[%(%Y-%m-%dT%H:%M:%SZ)T] [!!!] %s\n' -1 "$*" >&2
     exit 1
 }
 
@@ -53,12 +74,12 @@ pacman_install() {
     pacman -S --needed --noconfirm "${packages[@]}"
 }
 
-copy_self_to_target() {
-    local target="$1"
+install_template() {
+    local source_name="$1"
+    local target_path="$2"
+    local source_path="$SCRIPT_DIR/templates/$source_name"
 
-    mkdir -p "$target"
-    rsync -a --delete \
-        --exclude '.git' \
-        --exclude 'var' \
-        "$SCRIPT_DIR/" "$target/"
+    [[ -r "$source_path" ]] || die "Template is not readable: $source_path"
+    mkdir -p "$(dirname -- "$target_path")"
+    install -m 0644 "$source_path" "$target_path"
 }

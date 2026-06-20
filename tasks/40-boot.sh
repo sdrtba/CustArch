@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ensure_mkinitcpio_module() {
+boot_ensure_mkinitcpio_module() {
     local module="$1"
     local config="/etc/mkinitcpio.conf"
 
@@ -36,7 +36,7 @@ run_chroot() {
     printf '%s\n' "$root_options" > /etc/kernel/cmdline
 
     if [[ "$FS_TYPE" == "btrfs" ]]; then
-        ensure_mkinitcpio_module btrfs
+        boot_ensure_mkinitcpio_module btrfs
     fi
 
     mkinitcpio -P

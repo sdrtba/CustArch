@@ -5,19 +5,26 @@ BASE_PACKAGES=(
     base-devel
     linux
     linux-firmware
+)
+
+ADMIN_PACKAGES=(
     sudo
     networkmanager
+    openssh
+    ufw
+    reflector
+    pacman-contrib
+    efibootmgr
+    sbctl
+)
+
+CLI_PACKAGES=(
     git
     nano
     vim
     curl
     wget
-    openssh
-    reflector
-    pacman-contrib
-    zram-generator
-    efibootmgr
-    sbctl
+    rsync
     jq
     zsh
     fzf
@@ -27,7 +34,13 @@ BASE_PACKAGES=(
     man-pages
     texinfo
     unzip
-    ufw
+)
+
+SYSTEM_PACKAGES=(
+    zram-generator
+)
+
+BACKUP_PACKAGES=(
     timeshift
     rustup
 )
@@ -57,7 +70,7 @@ VM_PACKAGES=(
     qemu-guest-agent
 )
 
-DESKTOP_PACKAGES=(
+DESKTOP_AUDIO_PACKAGES=(
     pipewire
     pipewire-alsa
     pipewire-audio
@@ -65,22 +78,68 @@ DESKTOP_PACKAGES=(
     pipewire-pulse
     wireplumber
     pavucontrol
+)
+
+DESKTOP_HARDWARE_PACKAGES=(
     bluez
     bluez-utils
+    blueman
     brightnessctl
+    network-manager-applet
+)
+
+DESKTOP_PORTAL_PACKAGES=(
     xdg-utils
     xdg-user-dirs
+    xdg-desktop-portal
+    xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland
+)
+
+DESKTOP_WAYLAND_PACKAGES=(
     wl-clipboard
+    cliphist
     grim
     slurp
+    swappy
+    playerctl
+    pamixer
+    qt5-wayland
+    qt6-wayland
+)
+
+DESKTOP_APPS_PACKAGES=(
+    firefox
+    thunar
+    thunar-archive-plugin
+    tumbler
+    gvfs
+    file-roller
     kitty
+)
+
+DESKTOP_STYLE_PACKAGES=(
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    ttf-dejavu
+    ttf-jetbrains-mono-nerd
+    adwaita-icon-theme
+    papirus-icon-theme
+    nwg-look
+    qt5ct
+    qt6ct
+)
+
+HYPRLAND_PACKAGES=(
     hyprland
     hyprlock
     hypridle
     hyprpicker
-    xdg-desktop-portal-hyprland
     waybar
     rofi-wayland
+    mako
+    polkit-gnome
 )
 
 AUR_PACKAGES=(
@@ -94,6 +153,10 @@ aur_packages() {
 
 target_packages() {
     printf '%s\n' "${BASE_PACKAGES[@]}"
+    printf '%s\n' "${ADMIN_PACKAGES[@]}"
+    printf '%s\n' "${CLI_PACKAGES[@]}"
+    printf '%s\n' "${SYSTEM_PACKAGES[@]}"
+    printf '%s\n' "${BACKUP_PACKAGES[@]}"
 
     case "$FS_TYPE" in
         btrfs) printf '%s\n' "${BTRFS_PACKAGES[@]}" ;;
@@ -107,6 +170,12 @@ target_packages() {
     esac
 
     if [[ "$INSTALL_HYPRLAND" == "yes" ]]; then
-        printf '%s\n' "${DESKTOP_PACKAGES[@]}"
+        printf '%s\n' "${DESKTOP_AUDIO_PACKAGES[@]}"
+        printf '%s\n' "${DESKTOP_HARDWARE_PACKAGES[@]}"
+        printf '%s\n' "${DESKTOP_PORTAL_PACKAGES[@]}"
+        printf '%s\n' "${DESKTOP_WAYLAND_PACKAGES[@]}"
+        printf '%s\n' "${DESKTOP_APPS_PACKAGES[@]}"
+        printf '%s\n' "${DESKTOP_STYLE_PACKAGES[@]}"
+        printf '%s\n' "${HYPRLAND_PACKAGES[@]}"
     fi
 }

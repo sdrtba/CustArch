@@ -1,0 +1,9 @@
+.notification {
+  border-radius: 12px;
+  padding: 10px;
+  background: rgba(30, 30, 30, 0.9);
+}
+
+.control-center {
+  background: rgba(20, 20, 20, 0.95);
+}

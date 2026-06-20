@@ -4,6 +4,7 @@ MANIFEST_FILE="${MANIFEST_FILE:-$SCRIPT_DIR/manifest.conf}"
 
 load_manifest() {
     [[ -r "$MANIFEST_FILE" ]] || die "Manifest is not readable: $MANIFEST_FILE"
+    # shellcheck source=/dev/null
     source "$MANIFEST_FILE"
 }
 
@@ -24,6 +25,7 @@ validate_manifest() {
     : "${INSTALL_HYPRLAND:?INSTALL_HYPRLAND is required}"
     : "${GPU:?GPU is required}"
     : "${INSTALL_PARU:?INSTALL_PARU is required}"
+    : "${INSTALL_HOMEFILES:?INSTALL_HOMEFILES is required}"
     : "${MOUNT_OPTIONS:?MOUNT_OPTIONS is required}"
     : "${HOSTNAME:?HOSTNAME is required}"
     : "${TIMEZONE:?TIMEZONE is required}"
@@ -38,6 +40,7 @@ validate_manifest() {
     validate_yes_no FORMAT_ESP "$FORMAT_ESP"
     validate_yes_no INSTALL_HYPRLAND "$INSTALL_HYPRLAND"
     validate_yes_no INSTALL_PARU "$INSTALL_PARU"
+    validate_yes_no INSTALL_HOMEFILES "$INSTALL_HOMEFILES"
 
     [[ "$EFI_PART" != "$ROOT_PART" ]] || die "EFI_PART and ROOT_PART must be different."
     [[ "$USERNAME" =~ ^[a-z_][a-z0-9_-]*[$]?$ ]] || die "Invalid USERNAME: $USERNAME"

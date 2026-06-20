@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 run_chroot() {
+    log "Set password for root"
     passwd
 
     if ! id "$USERNAME" >/dev/null 2>&1; then

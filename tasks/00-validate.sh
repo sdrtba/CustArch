@@ -2,7 +2,7 @@
 
 run_live() {
     local type parent
-    local root_fstype root_parttype efi_fstype
+    local root_fstype root_parttype
 
     [[ -b "$DISK" ]] || die "Disk does not exist: $DISK"
     type="$(lsblk -dn -o TYPE "$DISK" 2>/dev/null)"

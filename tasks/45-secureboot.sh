@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-sign_efi_file() {
+secureboot_sign_efi_file() {
     local file="$1"
 
     if [[ -f "$file" ]]; then
@@ -10,7 +10,7 @@ sign_efi_file() {
     fi
 }
 
-clear_efi_variable_immutable_flags() {
+secureboot_clear_efi_variable_immutable_flags() {
     local var
     local -a patterns=(
         /sys/firmware/efi/efivars/PK-*
@@ -26,22 +26,25 @@ clear_efi_variable_immutable_flags() {
 }
 
 run_chroot() {
+    local sbctl_status
+
     install_template 99-secureboot-sign.hook /etc/pacman.d/hooks/99-secureboot-sign.hook
 
-    if ! sbctl status >/dev/null 2>&1; then
+    if ! sbctl_status="$(sbctl status 2>&1)"; then
         warn "sbctl status failed; secure boot signing will need manual review."
+        printf '%s\n' "$sbctl_status"
         return 0
     fi
 
-    if ! sbctl status | grep -q 'Installed:.*✓'; then
+    if ! grep -Eq '^Installed:[[:space:]].*(yes|✓)' <<<"$sbctl_status"; then
         sbctl create-keys
     fi
 
-    sign_efi_file /boot/EFI/systemd/systemd-bootx64.efi
-    sign_efi_file /boot/EFI/BOOT/BOOTX64.EFI
-    sign_efi_file /boot/EFI/Linux/arch-linux.efi
-    sign_efi_file /boot/EFI/Linux/arch-linux-fallback.efi
-    sign_efi_file /boot/vmlinuz-linux
+    secureboot_sign_efi_file /boot/EFI/systemd/systemd-bootx64.efi
+    secureboot_sign_efi_file /boot/EFI/BOOT/BOOTX64.EFI
+    secureboot_sign_efi_file /boot/EFI/Linux/arch-linux.efi
+    secureboot_sign_efi_file /boot/EFI/Linux/arch-linux-fallback.efi
+    secureboot_sign_efi_file /boot/vmlinuz-linux
 
     log "Checking Secure Boot enrollment state..."
     if ! sbctl_status="$(sbctl status 2>&1)"; then
@@ -57,7 +60,7 @@ run_chroot() {
     fi
 
     log "Clearing immutable flags on Secure Boot EFI variables..."
-    clear_efi_variable_immutable_flags
+    secureboot_clear_efi_variable_immutable_flags
 
     log "Enrolling Secure Boot keys with Microsoft certificates..."
     if sbctl enroll-keys --microsoft; then
