@@ -17,10 +17,41 @@ boot_ensure_mkinitcpio_module() {
     fi
 }
 
+boot_efi_partition_number() {
+    local part_number
+
+    part_number="$(lsblk -no PARTN "$EFI_PART")"
+    [[ -n "$part_number" ]] || die "Could not resolve partition number for $EFI_PART"
+
+    printf '%s\n' "$part_number"
+}
+
+boot_ensure_nvram_entry() {
+    local boot_label="Linux Boot Manager"
+    local efi_loader='\EFI\systemd\systemd-bootx64.efi'
+    local esp_part_number
+
+    if efibootmgr | grep -Fq "$boot_label"; then
+        log "NVRAM boot entry already exists: $boot_label"
+        return 0
+    fi
+
+    esp_part_number="$(boot_efi_partition_number)"
+
+    log "Creating NVRAM boot entry: $boot_label"
+    efibootmgr \
+        --create \
+        --disk "$DISK" \
+        --part "$esp_part_number" \
+        --label "$boot_label" \
+        --loader "$efi_loader"
+}
+
 run_chroot() {
     local root_partuuid root_options
 
     bootctl --esp-path=/boot install
+    boot_ensure_nvram_entry
 
     root_partuuid="$(blkid -s PARTUUID -o value "$ROOT_PART")"
     [[ -n "$root_partuuid" ]] || die "Could not resolve PARTUUID for $ROOT_PART"
